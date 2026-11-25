@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MADA MLALAO INTERNA</title>
-
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:#f3f4f6;color:#202432;padding-bottom:85px}
@@ -23,6 +22,7 @@ input:focus,select:focus{border-color:#ed2118}
 .btn{width:100%;padding:14px;border-radius:12px;background:#ed2118;color:white;font-weight:bold;margin-top:13px}
 .btn-light{background:#fff0ef;color:#d51e18}
 .btn-green{background:#159447;color:white}
+.btn-blue{background:#2563eb;color:white}
 .row{display:flex;gap:10px}
 .row>*{flex:1;min-width:0}
 .auth{max-width:480px;margin:35px auto;padding:15px}
@@ -56,626 +56,111 @@ input:focus,select:focus{border-color:#ed2118}
 .wallet-address{font-weight:bold;overflow-wrap:anywhere;color:#202432}
 </style>
 </head>
-
 <body>
-
 <section id="authScreen" class="auth">
- <div class="auth-logo">
-  <h1>🌍 MADA MLALAO INTERNA</h1>
-  <p>Bienvenue sur notre plateforme</p>
- </div>
-
- <div class="auth-tabs">
-  <button id="tabRegister" class="active" onclick="showAuth('register')">MISORATRA</button>
-  <button id="tabLogin" onclick="showAuth('login')">MIDITRA</button>
- </div>
-
+ <div class="auth-logo"><h1>🌍 MADA MLALAO INTERNA</h1><p>Bienvenue sur notre plateforme</p></div>
+ <div class="auth-tabs"><button id="tabRegister" class="active" onclick="showAuth('register')">MISORATRA</button><button id="tabLogin" onclick="showAuth('login')">MIDITRA</button></div>
  <div class="card" id="registerForm">
   <h3>Création du compte</h3>
-
-  <label>Nom complet</label>
-  <input id="regName" placeholder="Ampidiro ny anaranao">
-
+  <label>Nom complet</label><input id="regName" placeholder="Ampidiro ny anaranao">
   <label>Firenena sy laharana finday</label>
-  <div class="row">
-   <select id="countryCode" style="max-width:115px">
-    <option value="+261">🇲🇬 +261</option>
-    <option value="+33">🇫🇷 +33</option>
-    <option value="+1">🇺🇸 +1</option>
-    <option value="+44">🇬🇧 +44</option>
-    <option value="+27">🇿🇦 +27</option>
-    <option value="+971">🇦🇪 +971</option>
-    <option value="+91">🇮🇳 +91</option>
-    <option value="+86">🇨🇳 +86</option>
-    <option value="+81">🇯🇵 +81</option>
-   </select>
-   <input id="regPhone" type="tel" placeholder="Laharana finday">
-  </div>
-
-  <label>Tenimiafina</label>
-  <input id="regPassword" type="password" placeholder="Mamorona tenimiafina">
-
-  <label>Confirmena ny tenimiafina</label>
-  <input id="regConfirm" type="password" placeholder="Avereno ny tenimiafina">
-
-  <label>Tenimiafina fisintonana</label>
-  <input id="regWithdrawPassword" type="password" placeholder="Tenimiafina fisintonana">
-
-  <button class="btn" onclick="register()">CRÉATION DU COMPTE</button>
-  <p id="registerMessage" class="message"></p>
+  <div class="row"><select id="countryCode" style="max-width:115px"><option value="+261">🇲🇬 +261</option><option value="+33">🇫🇷 +33</option><option value="+1">🇺🇸 +1</option><option value="+44">🇬🇧 +44</option><option value="+27">🇿🇦 +27</option><option value="+971">🇦🇪 +971</option><option value="+91">🇮🇳 +91</option><option value="+86">🇨🇳 +86</option><option value="+81">🇯🇵 +81</option></select><input id="regPhone" type="tel" placeholder="Laharana finday"></div>
+  <label>Tenimiafina</label><input id="regPassword" type="password" placeholder="Mamorona tenimiafina">
+  <label>Confirmena ny tenimiafina</label><input id="regConfirm" type="password" placeholder="Avereno ny tenimiafina">
+  <label>Tenimiafina fisintonana</label><input id="regWithdrawPassword" type="password" placeholder="Tenimiafina fisintonana">
+  <button class="btn" onclick="register()">CRÉATION DU COMPTE</button><p id="registerMessage" class="message"></p>
  </div>
-
  <div class="card hidden" id="loginForm">
-  <h3>Connexion</h3>
-  <label>Laharana finday</label>
-  <input id="loginPhone" type="tel" placeholder="Ampidiro miaraka amin'ny code pays">
-
-  <label>Tenimiafina</label>
-  <input id="loginPassword" type="password" placeholder="Tenimiafina">
-
-  <button class="btn" onclick="login()">MIDITRA</button>
-  <p id="loginMessage" class="message"></p>
+  <h3>Connexion</h3><label>Laharana finday</label><input id="loginPhone" type="tel" placeholder="Ampidiro miaraka amin'ny code pays">
+  <label>Tenimiafina</label><input id="loginPassword" type="password" placeholder="Tenimiafina">
+  <button class="btn" onclick="login()">MIDITRA</button><p id="loginMessage" class="message"></p>
+  <p style="font-size:12px;text-align:center;color:#888">Admin? <a href="#" onclick="showAdminBox();return false" style="color:#d71919">Ouvrir Admin</a></p>
+  <div id="adminLoginBox" class="hidden"><input id="adminKey" placeholder="ADMIN KEY"><button class="btn btn-blue" onclick="adminLogin()">ENTRER ADMIN</button></div>
  </div>
 </section>
-
 <div id="memberScreen" class="hidden">
-
-<header class="top">
- <h2>🌍 MADA MLALAO INTERNA</h2>
- <p>Bienvenue sur votre espace membre</p>
-</header>
-
+<header class="top"><h2>🌍 MADA MLALAO INTERNA</h2><p>Bienvenue sur votre espace membre</p></header>
 <main class="container">
-
 <section id="pageHome">
- <div class="welcome">
-  <h2>Bienvenue !</h2>
-  <p>Votre espace membre MADA MLALAO INTERNA</p>
- </div>
-
- <div class="balance">
-  <small>MON SOLDE</small>
-  <strong id="homeBalance">0.00 $</strong>
-  <small>Solde affiché après confirmation par le serveur</small>
- </div>
-
- <div class="action-grid">
-  <button class="action" onclick="goTo('Deposit')">
-   <span>💳</span>RECHARGE
-  </button>
-  <button class="action" onclick="goTo('Withdraw')">
-   <span>💸</span>RETRAIT
-  </button>
- </div>
-
- <div class="card">
-  <h3>Informations</h3>
-  <p style="font-size:13px;color:#666">
-   Ny dépôt sy retrait dia dinihin'ny Admin.
-   Ny vola dia tsy ampidirina amin'ny kaonty raha tsy voamarina.
-  </p>
-  <p style="font-size:12px;color:#888">Service Admin : 9h - 18h</p>
- </div>
+ <div class="welcome"><h2>Bienvenue !</h2><p>Votre espace membre MADA MLALAO INTERNA</p></div>
+ <div class="balance"><small>MON SOLDE</small><strong id="homeBalance">0.00 $</strong><small>Solde affiché après confirmation par le serveur</small></div>
+ <div class="action-grid"><button class="action" onclick="goTo('Deposit')"><span>💳</span>RECHARGE</button><button class="action" onclick="goTo('Withdraw')"><span>💸</span>RETRAIT</button></div>
+ <div class="card"><h3>Informations</h3><p style="font-size:13px;color:#666">Ny dépôt sy retrait dia dinihin'ny Admin. Ny vola dia tsy ampidirina amin'ny kaonty raha tsy voamarina.</p><p style="font-size:12px;color:#888">Service Admin : 9h - 18h • Commission Depot 10%</p></div>
 </section>
-
 <section id="pageDeposit" class="hidden">
- <div class="card">
-  <h3>💳 RECHARGE / DÉPÔT</h3>
-
-  <label>Wallet disponible</label>
-  <select id="depositMethod" onchange="showDepositWallet()">
-   <option value="">Chargement des wallets...</option>
-  </select>
-
-  <div id="depositWalletBox" class="info hidden">
-   <b>Réseau sélectionné :</b>
-   <p id="depositWalletNetwork"></p>
-   <b>Adresse de paiement :</b>
-   <input id="depositWalletAddress" class="wallet-address" readonly>
-   <button class="btn btn-light" onclick="copyDepositWallet()">COPIER L'ADRESSE</button>
-  </div>
-
-  <label>Montant en USD</label>
-  <input id="depositAmount" type="number" min="1" step="0.01" placeholder="Minimum 1 USD">
-
-  <label>Référence / Transaction ID</label>
-  <input id="depositReference" placeholder="Référence du paiement">
-
-  <button class="btn btn-green" onclick="sendDeposit()">ENVOYER LA DEMANDE</button>
-
-  <p id="depositMessage" class="message"></p>
-
-  <div class="info">
-   Ny fangatahana dia tsy midika fa efa tafiditra ny vola.
-   Miandry fanamarinana avy amin'ny Admin.
-   Hamarino tsara ny réseau sy ny adiresy alohan'ny handefasana vola.
-  </div>
+ <div class="card"><h3>💳 RECHARGE / DÉPÔT</h3>
+  <label>Wallet disponible</label><select id="depositMethod" onchange="showDepositWallet()"><option value="">Chargement des wallets...</option></select>
+  <div id="depositWalletBox" class="info hidden"><b>Réseau sélectionné :</b><p id="depositWalletNetwork"></p><b>Adresse de paiement :</b><input id="depositWalletAddress" class="wallet-address" readonly><button class="btn btn-light" onclick="copyDepositWallet()">COPIER L'ADRESSE</button></div>
+  <label>Montant en USD</label><input id="depositAmount" type="number" min="1" step="0.01" placeholder="Minimum 1 USD">
+  <label>Référence / Transaction ID</label><input id="depositReference" placeholder="Référence du paiement">
+  <button class="btn btn-green" onclick="sendDeposit()">ENVOYER LA DEMANDE</button><p id="depositMessage" class="message"></p>
+  <div class="info">Ny fangatahana dia tsy midika fa efa tafiditra ny vola. Miandry fanamarinana avy amin'ny Admin. Hamarino tsara ny réseau sy ny adiresy alohan'ny handefasana vola.</div>
  </div>
 </section>
-
 <section id="pageWithdraw" class="hidden">
- <div class="card">
-  <h3>💸 RETRAIT</h3>
-
-  <label>Mode de retrait</label>
-  <select id="withdrawMethod" onchange="changeWithdrawMethod()">
-   <option value="Orange Money">Orange Money</option>
-   <option value="Yas Money">Yas Money</option>
-   <option value="Airtel Money">Airtel Money</option>
-   <option value="USDT TRC20">USDT TRC20</option>
-   <option value="USDT BEP20">USDT BEP20</option>
-   <option value="ETH">ETH</option>
-   <option value="POLYGON">POLYGON</option>
-   <option value="BTC">BTC</option>
-  </select>
-
-  <label>Numéro ou adresse de réception</label>
-  <input id="withdrawAddress" placeholder="Ampidiro ny numéro na adresse">
-
-  <label>Montant en USD</label>
-  <input id="withdrawAmount" type="number" min="5" step="0.01" placeholder="Minimum 5 USD">
-
-  <label>Tenimiafina fisintonana</label>
-  <input id="withdrawPassword" type="password" placeholder="Mot de passe retrait">
-
-  <button class="btn" onclick="sendWithdraw()">DEMANDE RETRAIT</button>
-  <p id="withdrawMessage" class="message"></p>
-
-  <div class="info">
-   Ny retrait dia iharan'ny fanamarinana.
-   Tsy maintsy ampy ny solde ary manan-kery ny fangatahana.
-  </div>
+ <div class="card"><h3>💸 RETRAIT - ADRESSE FIXE</h3>
+  <p style="font-size:12px;color:#666">📌 Mametraha adresse 1 fois - voatahiry mandrakizay - tsy miovaova.</p>
+  <label>Mode de retrait</label><select id="withdrawMethod" onchange="changeWithdrawMethod()"><option value="Orange Money">Orange Money</option><option value="Yas Money">Yas Money</option><option value="Airtel Money">Airtel Money</option><option value="USDT TRC20">USDT TRC20</option><option value="USDT BEP20">USDT BEP20</option><option value="ETH">ETH</option><option value="POLYGON">POLYGON</option><option value="BTC">BTC</option></select>
+  <label>Numéro ou adresse de réception</label><input id="withdrawAddress" placeholder="Ampidiro ny numéro na adresse">
+  <button class="btn btn-blue" onclick="saveAddress()">💾 SAUVEGARDER MON ADRESSE</button><p id="savedAddr" style="font-size:12px;color:#159447;font-weight:bold"></p>
+  <label>Montant en USD</label><input id="withdrawAmount" type="number" min="5" step="0.01" placeholder="Minimum 5 USD">
+  <label>Tenimiafina fisintonana</label><input id="withdrawPassword" type="password" placeholder="Mot de passe retrait">
+  <button class="btn" onclick="sendWithdraw()">DEMANDE RETRAIT</button><p id="withdrawMessage" class="message"></p>
+  <div class="info">Ny retrait dia iharan'ny fanamarinana. Tsy maintsy ampy ny solde ary manan-kery ny fangatahana.</div>
  </div>
 </section>
-
 <section id="pageGames" class="hidden">
- <div class="section-title">🎮 NOS JEUX</div>
-
- <div class="game-card">
-  <h3>🎯 LUCKY LOTO</h3>
-  <p>Choisissez vos numéros et consultez les règles du jeu.</p>
-  <label>Type de participation</label>
-  <select id="lotoStake">
-   <option value="0.50">Petit - 0.50 $</option>
-   <option value="2.50">Moyen - 2.50 $</option>
-   <option value="5">Grand - 5.00 $</option>
-  </select>
-  <button class="btn" onclick="openGame('LUCKY LOTO','lotoStake')">OUVRIR UNE TABLE</button>
- </div>
-
- <div class="game-card">
-  <h3>🃏 CARD</h3>
-  <p>Jeu de cartes - règles et participation à confirmer.</p>
-  <button class="btn" onclick="openGame('CARD')">OUVRIR UNE TABLE</button>
- </div>
-
- <div class="game-card">
-  <h3>♥️ RAMI</h3>
-  <label>Type de jeu</label>
-  <select id="ramiType">
-   <option>BORDEL</option>
-   <option>NATUREL</option>
-  </select>
-  <button class="btn" onclick="openGame('RAMI')">OUVRIR UNE TABLE</button>
- </div>
-
- <div class="game-card">
-  <h3>🎲 LUDO</h3>
-  <p>Jeu Ludo - règles de participation à consulter.</p>
-  <button class="btn" onclick="openGame('LUDO')">OUVRIR UNE TABLE</button>
- </div>
-
+ <div class="section-title">🎮 NOS JEUX - TENA MANDEHA</div>
+ <div class="game-card"><h3>🎡 ROULETTE x2</h3><p>Rouge na Noir - Gagne x2</p><div class="row"><input id="rouletteBet" type="number" value="5" placeholder="Bet USD"><select id="rouletteChoice"><option value="rouge">🔴 Rouge</option><option value="noir">⚫ Noir</option></select></div><button class="btn" onclick="playGame('roulette')">🎲 JOUER ROULETTE</button><p id="rouletteRes" class="message"></p></div>
+ <div class="game-card"><h3>🎲 DICE x1.9</h3><p>Plus 4-6 na Moins 1-3</p><div class="row"><input id="diceBet" type="number" value="5" placeholder="Bet USD"><select id="diceChoice"><option value="plus">Plus 4-6</option><option value="moins">Moins 1-3</option></select></div><button class="btn" onclick="playGame('dice')">🎲 JOUER DICE</button><p id="diceRes" class="message"></p></div>
+ <div class="game-card"><h3>🚀 CRASH</h3><p>Cashout 2x / 3x / 5x</p><div class="row"><input id="crashBet" type="number" value="5" placeholder="Bet USD"><select id="crashChoice"><option value="2">Cashout 2x</option><option value="3">Cashout 3x</option><option value="5">Cashout 5x</option></select></div><button class="btn" onclick="playGame('crash')">🚀 JOUER CRASH</button><p id="crashRes" class="message"></p></div>
+ <div class="game-card"><h3>🎯 LUCKY LOTO</h3><p>Choisissez vos numéros - Bientot</p><select id="lotoStake"><option value="0.50">Petit - 0.50 $</option><option value="2.50">Moyen - 2.50 $</option><option value="5">Grand - 5.00 $</option></select><button class="btn btn-light" onclick="alert('LOTO - Bientot disponible')">OUVRIR UNE TABLE</button></div>
+ <div class="game-card"><h3>🃏 CARD</h3><p>Jeu de cartes - Bientot</p><button class="btn btn-light" onclick="alert('CARD - Bientot')">OUVRIR UNE TABLE</button></div>
+ <div class="game-card"><h3>♥️ RAMI</h3><select id="ramiType"><option>BORDEL</option><option>NATUREL</option></select><button class="btn btn-light" onclick="alert('RAMI - Bientot')">OUVRIR UNE TABLE</button></div>
+ <div class="game-card"><h3>🎲 LUDO</h3><p>Jeu Ludo - Bientot</p><button class="btn btn-light" onclick="alert('LUDO - Bientot')">OUVRIR UNE TABLE</button></div>
  <p id="gameMessage" class="message"></p>
- <div class="info">Mode de démonstration uniquement. Aucun pari en argent réel n'est activé.</div>
 </section>
-
 <section id="pageAccount" class="hidden">
- <div class="card">
-  <h3>🤵 MON COMPTE</h3>
-  <p>Nom : <b id="accountName">-</b></p>
-  <p>Identifiant : <b id="accountId">-</b></p>
-  <p>Téléphone : <b id="accountPhone">-</b></p>
-  <p>Solde : <b id="accountBalance">0.00 $</b></p>
- </div>
-
- <div class="card">
-  <h3>💬 SUPPORT</h3>
-  <label>Votre message</label>
-  <input id="supportMessage" placeholder="Soraty eto ny hafatrao">
-  <button class="btn" onclick="sendSupport()">ALEFAO ANY AMIN'NY ADMIN</button>
-  <p id="supportResult" class="message"></p>
- </div>
-
- <div class="card">
-  <h3>🔗 LIEN D'INVITATION</h3>
-  <input id="inviteLink" readonly>
-  <button class="btn btn-light" onclick="copyInvite()">COPIER LE LIEN</button>
- </div>
-
+ <div class="card"><h3>🤵 MON COMPTE</h3><p>Nom : <b id="accountName">-</b></p><p>Identifiant : <b id="accountId">-</b></p><p>Téléphone : <b id="accountPhone">-</b></p><p>Solde : <b id="accountBalance">0.00 $</b></p><p>Adresse Retrait Fixe : <b id="accountAddr">-</b></p></div>
+ <div class="card"><h3>💬 SUPPORT</h3><label>Votre message</label><input id="supportMessage" placeholder="Soraty eto ny hafatrao"><button class="btn" onclick="sendSupport()">ALEFAO ANY AMIN'NY ADMIN</button><p id="supportResult" class="message"></p></div>
+ <div class="card"><h3>🔗 LIEN D'INVITATION</h3><input id="inviteLink" readonly><button class="btn btn-light" onclick="copyInvite()">COPIER LE LIEN</button></div>
+ <div id="adminBox" class="card hidden"><h3>🛡️ ADMIN PANEL</h3><button class="btn btn-blue" onclick="loadAdmin()">Voir Notifications / Depots / Retraits</button><div id="adminData" style="font-size:12px"></div><label>Changer Adresse Wallet Admin</label><select id="admWalletNet"></select><input id="admWalletAddr" placeholder="Nouvelle adresse admin"><button class="btn btn-blue" onclick="updateAdminWallet()">Changer Adresse Admin</button></div>
  <button class="btn" onclick="logout()">DÉCONNEXION</button>
 </section>
-
-<section id="pageHistory" class="hidden">
- <div class="card">
-  <h3>🌉 HISTORIQUE</h3>
-  <div id="historyList">Tsy mbola misy historique.</div>
-  <button class="btn btn-light" onclick="loadHistory()">ACTUALISER</button>
- </div>
-</section>
-
+<section id="pageHistory" class="hidden"><div class="card"><h3>🌉 HISTORIQUE</h3><div id="historyList">Tsy mbola misy historique.</div><button class="btn btn-light" onclick="loadHistory()">ACTUALISER</button></div></section>
 </main>
-
 <nav class="bottom-nav">
- <button class="nav-btn active" data-page="Home" onclick="navigate('Home')">
-  <span class="icon">🏛️</span>Accueil
- </button>
- <button class="nav-btn" data-page="Games" onclick="navigate('Games')">
-  <span class="icon">🎮</span>Jeux
- </button>
- <button class="nav-btn" data-page="Account" onclick="navigate('Account')">
-  <span class="icon">🤵</span>Mon compte
- </button>
- <button class="nav-btn" data-page="History" onclick="navigate('History')">
-  <span class="icon">🌉</span>Historique
- </button>
+ <button class="nav-btn active" data-page="Home" onclick="navigate('Home')"><span class="icon">🏛️</span>Accueil</button>
+ <button class="nav-btn" data-page="Games" onclick="navigate('Games')"><span class="icon">🎮</span>Jeux</button>
+ <button class="nav-btn" data-page="Account" onclick="navigate('Account')"><span class="icon">🤵</span>Mon compte</button>
+ <button class="nav-btn" data-page="History" onclick="navigate('History')"><span class="icon">🌉</span>Historique</button>
 </nav>
-
 </div>
-
 <script>
-let authToken = sessionStorage.getItem("mada_token") || "";
-let member = null;
-let availableDepositWallets = [];
-
-async function api(path,method="GET",data=null){
- const options={
-  method,
-  headers:{"Content-Type":"application/json"}
- };
-
- if(authToken) options.headers.Authorization="Bearer "+authToken;
- if(data) options.body=JSON.stringify(data);
-
- const response=await fetch("/api"+path,options);
- const result=await response.json().catch(()=>({message:"Réponse serveur invalide"}));
-
- if(!response.ok) throw new Error(result.message || result.error || "Erreur serveur");
- return result;
-}
-
-function showAuth(mode){
- document.getElementById("registerForm").classList.toggle("hidden",mode!=="register");
- document.getElementById("loginForm").classList.toggle("hidden",mode!=="login");
- document.getElementById("tabRegister").classList.toggle("active",mode==="register");
- document.getElementById("tabLogin").classList.toggle("active",mode==="login");
-}
-
-async function register(){
- const name=document.getElementById("regName").value.trim();
- const countryCode=document.getElementById("countryCode").value;
- const phone=document.getElementById("regPhone").value.trim();
- const password=document.getElementById("regPassword").value;
- const confirm=document.getElementById("regConfirm").value;
- const withdrawalPassword=document.getElementById("regWithdrawPassword").value;
- const message=document.getElementById("registerMessage");
-
- if(!name||!phone||!password||!withdrawalPassword){
-  message.textContent="Fenoy daholo ny saha rehetra.";
-  return;
- }
-
- if(password!==confirm){
-  message.textContent="Tsy mitovy ny tenimiafina.";
-  return;
- }
-
- if(password.length<8||withdrawalPassword.length<8){
-  message.textContent="Tokony ho 8 caractères farafahakeliny ny tenimiafina.";
-  return;
- }
-
- try{
-  const result=await api("/register","POST",{
-   nom:name,
-   pays:countryCode,
-   numero:countryCode+phone,
-   password,
-   confirmPassword:confirm,
-   withdrawalPassword
-  });
-
-  message.textContent=result.message||"Voaray ny fisoratana anarana. Afaka miditra ianao.";
-  showAuth("login");
- }catch(error){
-  message.textContent=error.message;
- }
-}
-
-async function login(){
- const phone=document.getElementById("loginPhone").value.trim();
- const password=document.getElementById("loginPassword").value;
- const message=document.getElementById("loginMessage");
-
- if(!phone||!password){
-  message.textContent="Ampidiro ny laharana sy tenimiafina.";
-  return;
- }
-
- try{
-  const result=await api("/login","POST",{numero:phone,password});
-
-  if(!result.token) throw new Error("Tsy nahazo token avy amin'ny serveur.");
-
-  authToken=result.token;
-  sessionStorage.setItem("mada_token",authToken);
-  member=result.user||result.member||{};
-  enterMember();
- }catch(error){
-  message.textContent=error.message;
- }
-}
-
-function enterMember(){
- document.getElementById("authScreen").classList.add("hidden");
- document.getElementById("memberScreen").classList.remove("hidden");
-
- document.getElementById("accountName").textContent=member.nom||member.name||"-";
- document.getElementById("accountId").textContent=member.id||"-";
- document.getElementById("accountPhone").textContent=member.numero||member.phone||"-";
- document.getElementById("inviteLink").value=location.origin+"/?ref="+(member.id||"");
-
- navigate("Home");
- refreshBalance();
-}
-
-function navigate(page){
- const pages=["Home","Games","Account","History"];
-
- pages.forEach(p=>{
-  document.getElementById("page"+p).classList.toggle("hidden",p!==page);
- });
-
- document.querySelectorAll(".nav-btn").forEach(b=>{
-  b.classList.toggle("active",b.dataset.page===page);
- });
-
- if(page==="History") loadHistory();
- if(page==="Account") refreshBalance();
-}
-
-function goTo(page){
- const pages=["Home","Deposit","Withdraw","Games","Account","History"];
-
- pages.forEach(p=>{
-  const el=document.getElementById("page"+p);
-  if(el) el.classList.add("hidden");
- });
-
- const target=document.getElementById("page"+page);
- if(target) target.classList.remove("hidden");
-
- if(page==="Deposit") loadDepositWallets();
-}
-
-async function refreshBalance(){
- try{
-  const result=await api("/me");
-  const balance=Number(result.solde??result.balance??0).toFixed(2)+" $";
-
-  document.getElementById("homeBalance").textContent=balance;
-  document.getElementById("accountBalance").textContent=balance;
- }catch(error){}
-}
-
-/* WALLET DE DEPOT */
-
-async function loadDepositWallets(){
- const select=document.getElementById("depositMethod");
- const box=document.getElementById("depositWalletBox");
-
- select.innerHTML='<option value="">Chargement des wallets...</option>';
- box.classList.add("hidden");
- availableDepositWallets=[];
-
- try{
-  const result=await api("/wallets");
-  availableDepositWallets=result.wallets||[];
-
-  select.innerHTML='<option value="">Choisir un wallet disponible</option>';
-
-  availableDepositWallets.forEach(wallet=>{
-   const network=wallet.network||wallet.name||wallet.type||wallet.label||"";
-   const address=wallet.address||wallet.wallet_address||"";
-
-   if(!network||!address) return;
-
-   const option=document.createElement("option");
-   option.value=network;
-   option.textContent=network;
-   select.appendChild(option);
-  });
-
-  if(select.options.length===1){
-   select.innerHTML='<option value="">Aucun wallet disponible</option>';
-  }
- }catch(error){
-  select.innerHTML='<option value="">Impossible de charger les wallets</option>';
-  document.getElementById("depositMessage").textContent=error.message;
- }
-}
-
-function showDepositWallet(){
- const selected=document.getElementById("depositMethod").value;
- const box=document.getElementById("depositWalletBox");
-
- const wallet=availableDepositWallets.find(w=>
-  (w.network||w.name||w.type||w.label)===selected
- );
-
- if(!wallet){
-  box.classList.add("hidden");
-  return;
- }
-
- document.getElementById("depositWalletNetwork").textContent=
-  wallet.network||wallet.name||wallet.type||wallet.label;
-
- document.getElementById("depositWalletAddress").value=
-  wallet.address||wallet.wallet_address||"";
-
- box.classList.remove("hidden");
-}
-
-function copyDepositWallet(){
- const input=document.getElementById("depositWalletAddress");
-
- if(!input.value){
-  alert("Aucune adresse disponible.");
-  return;
- }
-
- input.select();
- input.setSelectionRange(0,99999);
-
- navigator.clipboard.writeText(input.value)
-  .then(()=>alert("Adresse copiée !"))
-  .catch(()=>alert("Adikao tanana ilay adresse."));
-}
-
-/* DEMANDE DE DEPOT */
-
-async function sendDeposit(){
- const method=document.getElementById("depositMethod").value;
- const amount=Number(document.getElementById("depositAmount").value);
- const reference=document.getElementById("depositReference").value.trim();
- const message=document.getElementById("depositMessage");
-
- if(!method||!reference||!Number.isFinite(amount)||amount<1){
-  message.textContent="Jereo ny wallet, référence ary montant (minimum 1 USD).";
-  return;
- }
-
- try{
-  const result=await api("/deposit","POST",{
-   method,
-   montant:amount,
-   reference
-  });
-
-  message.textContent=result.message||"Voaray ny fangatahana dépôt.";
- }catch(error){
-  message.textContent=error.message;
- }
-}
-
-function changeWithdrawMethod(){
- const method=document.getElementById("withdrawMethod").value;
- const field=document.getElementById("withdrawAddress");
-
- field.placeholder=method.includes("Money")
-  ?"Laharana handraisana vola"
-  :"Adresse wallet handraisana vola";
-}
-
-async function sendWithdraw(){
- const method=document.getElementById("withdrawMethod").value;
- const address=document.getElementById("withdrawAddress").value.trim();
- const amount=Number(document.getElementById("withdrawAmount").value);
- const withdrawalPassword=document.getElementById("withdrawPassword").value;
- const message=document.getElementById("withdrawMessage");
-
- if(!address||!withdrawalPassword||!Number.isFinite(amount)||amount<5){
-  message.textContent="Fenoy tsara ny saha. Minimum retrait : 5 USD.";
-  return;
- }
-
- try{
-  const result=await api("/withdraw","POST",{
-   method,
-   address,
-   montant:amount,
-   withdrawalPassword
-  });
-
-  message.textContent=result.message||"Voaray ny fangatahana retrait.";
- }catch(error){
-  message.textContent=error.message;
- }
-}
-
-async function openGame(game,stakeField){
- const message=document.getElementById("gameMessage");
- const stake=stakeField?Number(document.getElementById(stakeField).value):null;
- const extra=game==="RAMI"
-  ?{type:document.getElementById("ramiType").value}
-  :{};
-
- try{
-  const result=await api("/games/open","POST",{game,stake,...extra});
-  message.textContent=result.message||"Voaray ny fangatahana.";
- }catch(error){
-  message.textContent=error.message;
- }
-}
-
-async function sendSupport(){
- const msg=document.getElementById("supportMessage").value.trim();
- const result=document.getElementById("supportResult");
-
- if(!msg){
-  result.textContent="Soraty aloha ny hafatra.";
-  return;
- }
-
- try{
-  const response=await api("/support","POST",{message:msg});
-  result.textContent=response.message||"Voaray ny hafatra.";
-  document.getElementById("supportMessage").value="";
- }catch(error){
-  result.textContent=error.message;
- }
-}
-
-async function loadHistory(){
- const area=document.getElementById("historyList");
-
- try{
-  const result=await api("/history");
-  const items=result.history||result.items||[];
-
-  area.innerHTML=items.length
-   ?items.map(item=>
-    `<div class="list-item">${escapeText(item.type||item.description||"Activité")} — ${escapeText(item.status||"En attente")} — ${escapeText(item.date||"")}</div>`
-   ).join("")
-   :"Tsy mbola misy historique.";
- }catch(error){
-  area.textContent="Tsy mbola azo ny historique avy amin'ny serveur.";
- }
-}
-
-function escapeText(value){
- const div=document.createElement("div");
- div.textContent=String(value??"");
- return div.innerHTML;
-}
-
-function copyInvite(){
- const input=document.getElementById("inviteLink");
- input.select();
- input.setSelectionRange(0,99999);
-
- navigator.clipboard.writeText(input.value)
-  .then(()=>alert("Lien copié"))
-  .catch(()=>alert("Tsy afaka naka copie. Azafady, adikao tanana."));
-}
-
-function logout(){
- sessionStorage.removeItem("mada_token");
- authToken="";
- member=null;
- location.reload();
-}
-</script>
-
-</body>
-</html>
+let authToken=sessionStorage.getItem("mada_token")||"";let member=null;let availableDepositWallets=[];
+async function api(path,method="GET",data=null){let o={method,headers:{"Content-Type":"application/json"}};if(authToken) o.headers.Authorization="Bearer "+authToken;if(data) o.body=JSON.stringify(data);let r=await fetch("/api"+path,o);let j=await r.json().catch(()=>({message:"Erreur serveur"}));if(!r.ok) throw new Error(j.message||"Erreur serveur");return j;}
+function showAuth(m){document.getElementById("registerForm").classList.toggle("hidden",m!=="register");document.getElementById("loginForm").classList.toggle("hidden",m!=="login");document.getElementById("tabRegister").classList.toggle("active",m==="register");document.getElementById("tabLogin").classList.toggle("active",m==="login");}
+function showAdminBox(){document.getElementById("adminLoginBox").classList.remove("hidden");}
+async function register(){let name=document.getElementById("regName").value.trim();let cc=document.getElementById("countryCode").value;let phone=document.getElementById("regPhone").value.trim();let pw=document.getElementById("regPassword").value;let cf=document.getElementById("regConfirm").value;let wp=document.getElementById("regWithdrawPassword").value;let msg=document.getElementById("registerMessage");if(!name||!phone||!pw||!wp){msg.textContent="Fenoy daholo ny saha rehetra.";return;}if(pw!==cf){msg.textContent="Tsy mitovy ny tenimiafina.";return;}if(pw.length<4||wp.length<4){msg.textContent="4 caracteres farafahakeliny.";return;}try{let r=await api("/register","POST",{nom:name,pays:cc,numero:cc+phone,password:pw,confirmPassword:cf,withdrawalPassword:wp});msg.textContent=r.message||"Vita. Afaka miditra ianao.";showAuth("login");}catch(e){msg.textContent=e.message;}}
+async function login(){let phone=document.getElementById("loginPhone").value.trim();let pw=document.getElementById("loginPassword").value;let msg=document.getElementById("loginMessage");if(!phone||!pw){msg.textContent="Ampidiro ny laharana sy tenimiafina.";return;}try{let r=await api("/login","POST",{numero:phone,password:pw});if(!r.token) throw new Error("Tsy nahazo token.");authToken=r.token;sessionStorage.setItem("mada_token",authToken);member=r.user||{};enterMember();}catch(e){msg.textContent=e.message;}}
+function enterMember(){document.getElementById("authScreen").classList.add("hidden");document.getElementById("memberScreen").classList.remove("hidden");document.getElementById("accountName").textContent=member.nom||"-";document.getElementById("accountId").textContent=member.id||"-";document.getElementById("accountPhone").textContent=member.numero||"-";document.getElementById("inviteLink").value=location.origin+"/?ref="+(member.id||"");navigate("Home");refreshBalance();loadMyAddress();}
+function navigate(page){["Home","Games","Account","History"].forEach(p=>{document.getElementById("page"+p).classList.toggle("hidden",p!==page);});document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.page===page));if(page==="History") loadHistory();if(page==="Account") refreshBalance();}
+function goTo(page){["Home","Deposit","Withdraw","Games","Account","History"].forEach(p=>{let el=document.getElementById("page"+p);if(el) el.classList.add("hidden");});let t=document.getElementById("page"+page);if(t) t.classList.remove("hidden");if(page==="Deposit") loadDepositWallets();if(page==="Withdraw") loadMyAddress();}
+async function refreshBalance(){try{let r=await api("/me");let b=Number(r.user?.balance??r.balance??0).toFixed(2)+" $";document.getElementById("homeBalance").textContent=b;document.getElementById("accountBalance").textContent=b;}catch(e){}}
+async function loadDepositWallets(){let sel=document.getElementById("depositMethod");let box=document.getElementById("depositWalletBox");sel.innerHTML='<option value="">Chargement...</option>';box.classList.add("hidden");availableDepositWallets=[];try{let r=await api("/wallets");availableDepositWallets=r.wallets||[];sel.innerHTML='<option value="">Choisir un wallet</option>';availableDepositWallets.forEach(w=>{if(!w.network||!w.address) return;let o=document.createElement("option");o.value=w.network;o.textContent=w.network;sel.appendChild(o);});if(sel.options.length===1) sel.innerHTML='<option value="">Aucun wallet disponible</option>';}catch(e){sel.innerHTML='<option value="">Impossible de charger</option>';}}
+function showDepositWallet(){let sel=document.getElementById("depositMethod").value;let box=document.getElementById("depositWalletBox");let w=availableDepositWallets.find(x=>x.network===sel);if(!w){box.classList.add("hidden");return;}document.getElementById("depositWalletNetwork").textContent=w.network;document.getElementById("depositWalletAddress").value=w.address;box.classList.remove("hidden");}
+function copyDepositWallet(){let i=document.getElementById("depositWalletAddress");if(!i.value){alert("Aucune adresse");return;}navigator.clipboard.writeText(i.value).then(()=>alert("Adresse copiée !")).catch(()=>{i.select();alert("Adikao tanana");});}
+async function sendDeposit(){let method=document.getElementById("depositMethod").value;let amount=Number(document.getElementById("depositAmount").value);let ref=document.getElementById("depositReference").value.trim();let msg=document.getElementById("depositMessage");if(!method||!ref||!Number.isFinite(amount)||amount<1){msg.textContent="Jereo ny wallet, référence ary montant (minimum 1 USD).";return;}try{let r=await api("/deposit","POST",{method,amount,reference:ref});msg.textContent=r.message||"Voaray.";}catch(e){msg.textContent=e.message;}}
+function changeWithdrawMethod(){let m=document.getElementById("withdrawMethod").value;document.getElementById("withdrawAddress").placeholder=m.includes("Money")?"Laharana handraisana vola":"Adresse wallet handraisana vola";}
+async function loadMyAddress(){try{let r=await api("/my-address");if(r.address){document.getElementById("withdrawAddress").value=r.address;document.getElementById("savedAddr").textContent="✅ Adresse voatahiry: "+r.address;document.getElementById("accountAddr").textContent=r.address;}}catch(e){}}
+async function saveAddress(){let a=document.getElementById("withdrawAddress").value.trim();if(!a){alert("Fenoy adresse");return;}try{let r=await api("/save-address","POST",{address:a});alert(r.message);document.getElementById("savedAddr").textContent="✅ Adresse voatahiry: "+a;document.getElementById("accountAddr").textContent=a;}catch(e){alert(e.message);}}
+async function sendWithdraw(){let method=document.getElementById("withdrawMethod").value;let address=document.getElementById("withdrawAddress").value.trim();let amount=Number(document.getElementById("withdrawAmount").value);let wp=document.getElementById("withdrawPassword").value;let msg=document.getElementById("withdrawMessage");if(!address||!wp||!Number.isFinite(amount)||amount<5){msg.textContent="Fenoy tsara. Minimum retrait : 5 USD.";return;}try{let r=await api("/withdraw","POST",{method,address,amount,withdrawalPassword:wp});msg.textContent=r.message||"Voaray.";refreshBalance();}catch(e){msg.textContent=e.message;}}
+async function playGame(game){let bet,choice,el;if(game==="roulette"){bet=document.getElementById("rouletteBet").value;choice=document.getElementById("rouletteChoice").value;el="rouletteRes";}if(game==="dice"){bet=document.getElementById("diceBet").value;choice=document.getElementById("diceChoice").value;el="diceRes";}if(game==="crash"){bet=document.getElementById("crashBet").value;choice=document.getElementById("crashChoice").value;el="crashRes";}try{let r=await api("/play","POST",{game,bet:Number(bet),choice});document.getElementById(el).textContent=r.message+" | Solde: "+r.newBalance+" $";refreshBalance();}catch(e){document.getElementById(el).textContent=e.message;}}
+async function sendSupport(){let m=document.getElementById("supportMessage").value.trim();if(!m) return;try{let r=await api("/support","POST",{message:m});document.getElementById("supportResult").textContent=r.message;document.getElementById("supportMessage").value="";}catch(e){document.getElementById("supportResult").textContent=e.message;}}
+function copyInvite(){let i=document.getElementById("inviteLink");navigator.clipboard.writeText(i.value).then(()=>alert("Lien copié !"));}
+async function loadHistory(){try{let r=await api("/my-history");let h="";(r.deposits||[]).forEach(d=>h+=`<div class="list-item">💵 Depot ${d.amount} $ - ${d.status} - ${d.method}</div>`);(r.withdrawals||[]).forEach(d=>h+=`<div class="list-item">💸 Retrait ${d.amount} $ - ${d.status} → ${d.address}</div>`);(r.games||[]).forEach(d=>h+=`<div class="list-item">🎮 ${d.game} Bet ${d.bet} - ${d.win?'GAGNE +'+d.gain:'PERDU'} - ${d.result}</div>`);document.getElementById("historyList").innerHTML=h||"Tsy mbola misy historique.";}catch(e){document.getElementById("historyList").textContent=e.message;}}
+function logout(){authToken="";sessionStorage.removeItem("mada_token");location.reload();}
+async function adminLogin(){document.getElementById("adminBox").classList.remove("hidden");alert("Admin mode ON");loadAdmin();}
+async function loadAdmin(){let key=document.getElementById("adminKey").value;let h={'x-admin-key':key};let n=await fetch('/api/admin/notifications',{headers:h}).then(r=>r.json());let d=await fetch('/api/admin/deposits',{headers:h}).then(r=>r.json());let w=await fetch('/api/admin/withdrawals',{headers:h}).then(r=>r.json());let m=await fetch('/api/admin/members',{headers:h}).then(r=>r.json());let html='<b>🔔 NOTIFS</b><br>'+(n.notifications||[]).map(x=>x.message).join('<br>')+'<br><br><b>💵 DEPOTS</b><br>'+(d.deposits||[]).map(x=>`#${x.id} ${x.nom} ${x.amount} ${x.status} Ref:${x.reference} <button class="btn btn-green" style="padding:6px" onclick="validateAdmin('deposit',${x.id})">Valider</button>`).join('<br>')+'<br><br><b>💸 RETRAITS</b><br>'+(w.withdrawals||[]).map(x=>`#${x.id} ${x.nom} ${x.amount} ${x.status} → ${x.address} <button class="btn btn-green" style="padding:6px" onclick="validateAdmin('withdraw',${x.id})">Valider</button>`).join('<br>')+'<br><br><b>👥 MEMBRES</b><br>'+(m.members||[]).map(x=>`${x.nom} - ${x.numero} - ${x.balance} $ - Adresse: ${x.withdrawal_address||'-'}`).join('<br>');document.getElementById('adminData').innerHTML=html;let sel=document.getElementById('admWalletNet');if(sel && !sel.options.length){let ww=await fetch('/api/wallets').then(r=>r.json());sel.innerHTML=(ww.wallets||[]).map(x=>`<option>${x.network}</option>`).join('');}}
+async function validateAdmin(type,id){let usd=prompt('Montant en USD converti ? Laissez vide si meme montant:');let h={'Content-Type':'application/json','x-admin-key':document.getElementById('adminKey').value};let r=await fetch('/api/admin/validate',{method:'POST',headers:h,body:JSON.stringify({type,id,action:'approve',convertedUSD:usd})});let d=await r.json();alert(d.message);loadAdmin();}
+async function updateAdminWallet(){let h={'Content-Type':'application/json','x-admin-key':document.getElementById('adminKey').value};let r=await fetch('/api/admin/update-wallet',{method:'POST',headers:h,body:JSON.stringify({network:document.getElementById('admWalletNet').value,address:document.get
