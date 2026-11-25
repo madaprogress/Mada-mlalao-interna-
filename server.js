@@ -43,5 +43,19 @@ app.get("/api/admin/withdrawals",adminAuth,async(req,res)=>{const r=await pool.q
 app.get("/api/admin/members",adminAuth,async(req,res)=>{const r=await pool.query(`SELECT id,nom,pays,numero,balance,created_at FROM members ORDER BY created_at DESC LIMIT 100`);res.json({ok:true,members:r.rows});});
 app.post("/api/admin/validate",adminAuth,async(req,res)=>{try{const {type,id,action}=req.body;const table=type==="deposit"?"deposits":"withdrawals";const status=action==="approve"?"approved":"rejected";const r=await pool.query(`UPDATE ${table} SET status=$1 WHERE id=$2 RETURNING *`,[status,id]);if(!r.rowCount) return res.status(404).json({message:"Tsy hita"});if(status==="approved"&&type==="deposit"){const net=parseFloat(r.rows[0].amount)-parseFloat(r.rows[0].commission||0);await pool.query(`UPDATE members SET balance=balance+$1 WHERE id=$2`,[net,r.rows[0].member_id]);await pool.query(`UPDATE principal_wallet SET total_commission=total_commission+$1,total_deposits=total_deposits+$2 WHERE id=1`,[r.rows[0].commission||0,r.rows[0].amount]);}
 if(status==="approved"&&type==="withdraw"){await pool.query(`UPDATE members SET balance=balance-$1 WHERE id=$2`,[r.rows[0].amount,r.rows[0].member_id]);}res.json({ok:true,message:"Vita"});}catch{res.status(500).json({message:"Erreur"});}});
+// JEUX - MILALAO TENA IZY
+app.post("/api/play",auth,async(req,res)=>{try{
+const {game,bet,choice}=req.body; bet=parseFloat(bet);
+if(!bet||bet<=0) return res.status(400).json({message:"Bet diso"});
+if(parseFloat(req.user.balance)<bet) return res.status(400).json({message:"Solde tsy ampy"});
+let win=false; let multiplier=0; let result="";
+if(game==="roulette"){const n=Math.floor(Math.random()*37); const isRed=[1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36].includes(n); result=`Numero ${n} - ${n===0?'Vert':isRed?'Rouge':'Noir'}`; if((choice==="rouge"&&isRed)||(choice==="noir"&&!isRed&&n!==0)){win=true;multiplier=2;}}
+if(game==="dice"){const d=Math.floor(Math.random()*6)+1; result=`Dice: ${d}`; if((choice==="plus"&&d>=4)||(choice==="moins"&&d<=3)){win=true;multiplier=1.9;}}
+if(game==="crash"){const crash=(Math.random()*10+1).toFixed(2); result=`Crash a ${crash}x`; const cashout=parseFloat(choice)||2; if(parseFloat(crash)>=cashout){win=true;multiplier=cashout;}}
+const gain=win?bet*multiplier:0; const net=win?gain-bet:-bet;
+await pool.query(`UPDATE members SET balance=balance+$1 WHERE id=$2`,[net,req.user.id]);
+const nb=await pool.query(`SELECT balance FROM members WHERE id=$1`,[req.user.id]);
+res.json({ok:true,win,result,gain:win?gain:0,net,newBalance:nb.rows[0].balance,message:win?`🎉 GAGNE! ${result} - +${gain} USD`:`😢 PERDU - ${result} - -${bet} USD`});
+}catch(e){res.status(500).json({message:"Erreur jeu"});}});
 app.post("/api/support",auth,async(req,res)=>{await pool.query(`INSERT INTO support_messages (member_id,message) VALUES ($1,$2)`,[req.user.id,req.body.message]);await pool.query(`INSERT INTO admin_notifications (member_id,type,message) VALUES ($1,'support',$2)`,[req.user.id,`${req.user.nom} : ${req.body.message}`]);res.json({ok:true,message:"Voaray"});});
 app.listen(PORT,()=>{console.log("ONLINE PORT "+PORT);initDatabase().then(()=>console.log("DB ready")).catch(e=>console.error("DB ERROR:",e.message));});
