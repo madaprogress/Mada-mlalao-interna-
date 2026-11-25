@@ -1,43 +1,30 @@
-<!DOCTYPE html><html lang="fr">
+<!DOCTYPE html>
+<html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MADA MLALAO INTERNA</title><style>
+<title>MADA MLALAO INTERNA</title>
+
+<style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:#f3f4f6;color:#202432;padding-bottom:85px}
 button,input,select{font:inherit}
 button{cursor:pointer;border:0}
 .hidden{display:none!important}
-
-.top{
-background:linear-gradient(120deg,#ed2118,#c91616);
-color:white;text-align:center;padding:22px 12px;
-border-radius:0 0 22px 22px;
-}
+.top{background:linear-gradient(120deg,#ed2118,#c91616);color:white;text-align:center;padding:22px 12px;border-radius:0 0 22px 22px}
 .top h2{margin:0;font-size:21px}
 .top p{font-size:12px;margin:7px 0 0}
-
 .container{max-width:600px;margin:auto;padding:15px}
-.card{
-background:white;border-radius:17px;padding:17px;
-margin-bottom:14px;box-shadow:0 3px 14px #0000000c;
-}
+.card{background:white;border-radius:17px;padding:17px;margin-bottom:14px;box-shadow:0 3px 14px #0000000c}
 h3{margin:0 0 14px;color:#c91c1c}
 label{display:block;font-size:13px;font-weight:bold;margin-top:13px;color:#444}
-input,select{
-width:100%;padding:14px;border:1px solid #e1e3e8;
-border-radius:11px;background:#fff;margin-top:6px;outline:none;
-}
+input,select{width:100%;padding:14px;border:1px solid #e1e3e8;border-radius:11px;background:#fff;margin-top:6px;outline:none}
 input:focus,select:focus{border-color:#ed2118}
-.btn{
-width:100%;padding:14px;border-radius:12px;
-background:#ed2118;color:white;font-weight:bold;margin-top:13px;
-}
+.btn{width:100%;padding:14px;border-radius:12px;background:#ed2118;color:white;font-weight:bold;margin-top:13px}
 .btn-light{background:#fff0ef;color:#d51e18}
 .btn-green{background:#159447;color:white}
 .row{display:flex;gap:10px}
 .row>*{flex:1;min-width:0}
-
 .auth{max-width:480px;margin:35px auto;padding:15px}
 .auth-logo{text-align:center;margin-bottom:22px}
 .auth-logo h1{color:#d71919;font-size:24px;margin:0}
@@ -45,67 +32,51 @@ background:#ed2118;color:white;font-weight:bold;margin-top:13px;
 .auth-tabs{display:flex;background:#eee;border-radius:12px;padding:4px;margin-bottom:18px}
 .auth-tabs button{width:50%;padding:12px;border-radius:10px;background:transparent;font-weight:bold}
 .auth-tabs button.active{background:white;color:#d71919;box-shadow:0 2px 8px #0001}
-
-.welcome{
-background:linear-gradient(120deg,#b81414,#f04435);
-color:white;padding:22px;border-radius:17px;margin-bottom:15px;
-}
+.welcome{background:linear-gradient(120deg,#b81414,#f04435);color:white;padding:22px;border-radius:17px;margin-bottom:15px}
 .welcome h2{margin:0 0 7px}
 .welcome p{margin:0;font-size:13px}
-
-.balance{
-background:#202b40;color:white;border-radius:16px;padding:18px;
-margin-bottom:14px;
-}
+.balance{background:#202b40;color:white;border-radius:16px;padding:18px;margin-bottom:14px}
 .balance small{color:#cbd5e1}
 .balance strong{display:block;font-size:27px;margin-top:8px}
-
 .action-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:15px}
-.action{
-background:#ed2118;color:white;padding:19px 10px;
-border-radius:15px;text-align:center;font-weight:bold;
-}
+.action{background:#ed2118;color:white;padding:19px 10px;border-radius:15px;text-align:center;font-weight:bold}
 .action span{display:block;font-size:25px;margin-bottom:8px}
-
 .section-title{font-size:18px;font-weight:bold;margin:20px 0 12px}
-.game-card{
-background:white;border-radius:15px;padding:16px;
-margin-bottom:11px;box-shadow:0 2px 10px #0000000a;
-}
+.game-card{background:white;border-radius:15px;padding:16px;margin-bottom:11px;box-shadow:0 2px 10px #0000000a}
 .game-card h3{margin:0 0 6px}
 .game-card p{font-size:13px;color:#666;margin:5px 0}
 .game-card button{width:100%}
-
-.bottom-nav{
-position:fixed;bottom:0;left:0;right:0;
-background:white;display:grid;grid-template-columns:repeat(4,1fr);
-box-shadow:0 -3px 18px #00000012;
-padding:8px 4px calc(8px + env(safe-area-inset-bottom));
-z-index:10;
-}
-.nav-btn{
-background:transparent;color:#777;padding:6px 2px;
-font-size:11px;font-weight:bold;
-}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;display:grid;grid-template-columns:repeat(4,1fr);box-shadow:0 -3px 18px #00000012;padding:8px 4px calc(8px + env(safe-area-inset-bottom));z-index:10}
+.nav-btn{background:transparent;color:#777;padding:6px 2px;font-size:11px;font-weight:bold}
 .nav-btn .icon{display:block;font-size:23px;margin-bottom:4px}
 .nav-btn.active{color:#ed2118}
-
 .message{font-size:13px;margin-top:10px;color:#b91c1c}
-.info{background:#fff5e9;padding:12px;border-radius:10px;font-size:12px;color:#754b16;margin-top:10px}
+.info{background:#fff5e9;padding:12px;border-radius:10px;font-size:12px;color:#754b16;margin-top:10px;overflow-wrap:anywhere}
 .list-item{padding:12px 0;border-bottom:1px solid #eee;font-size:13px}
-</style></head><body><!-- FISORATANA SY FIDIRANA --><section id="authScreen" class="auth">
+.wallet-address{font-weight:bold;overflow-wrap:anywhere;color:#202432}
+</style>
+</head>
+
+<body>
+
+<section id="authScreen" class="auth">
  <div class="auth-logo">
   <h1>🌍 MADA MLALAO INTERNA</h1>
   <p>Bienvenue sur notre plateforme</p>
- </div> <div class="auth-tabs">
+ </div>
+
+ <div class="auth-tabs">
   <button id="tabRegister" class="active" onclick="showAuth('register')">MISORATRA</button>
   <button id="tabLogin" onclick="showAuth('login')">MIDITRA</button>
- </div> <div class="card" id="registerForm">
-  <h3>Création du compte</h3><label>Nom complet</label>
-<input id="regName" placeholder="Ampidiro ny anaranao">
+ </div>
 
-<label>Firenena sy laharana finday</label>
+ <div class="card" id="registerForm">
+  <h3>Création du compte</h3>
 
+  <label>Nom complet</label>
+  <input id="regName" placeholder="Ampidiro ny anaranao">
+
+  <label>Firenena sy laharana finday</label>
   <div class="row">
    <select id="countryCode" style="max-width:115px">
     <option value="+261">🇲🇬 +261</option>
@@ -119,47 +90,65 @@ font-size:11px;font-weight:bold;
     <option value="+81">🇯🇵 +81</option>
    </select>
    <input id="regPhone" type="tel" placeholder="Laharana finday">
-  </div><label>Tenimiafina</label>
-<input id="regPassword" type="password" placeholder="Mamorona tenimiafina">
+  </div>
 
-<label>Confirmena ny tenimiafina</label>
-<input id="regConfirm" type="password" placeholder="Avereno ny tenimiafina">
+  <label>Tenimiafina</label>
+  <input id="regPassword" type="password" placeholder="Mamorona tenimiafina">
 
-<label>Tenimiafina fisintonana</label>
-<input id="regWithdrawPassword" type="password" placeholder="Tenimiafina fisintonana">
+  <label>Confirmena ny tenimiafina</label>
+  <input id="regConfirm" type="password" placeholder="Avereno ny tenimiafina">
 
-<button class="btn" onclick="register()">CRÉATION DU COMPTE</button>
+  <label>Tenimiafina fisintonana</label>
+  <input id="regWithdrawPassword" type="password" placeholder="Tenimiafina fisintonana">
 
+  <button class="btn" onclick="register()">CRÉATION DU COMPTE</button>
   <p id="registerMessage" class="message"></p>
- </div> <div class="card hidden" id="loginForm">
+ </div>
+
+ <div class="card hidden" id="loginForm">
   <h3>Connexion</h3>
   <label>Laharana finday</label>
-  <input id="loginPhone" type="tel" placeholder="Laharana nampiasaina nisoratana"><label>Tenimiafina</label>
-<input id="loginPassword" type="password" placeholder="Tenimiafina">
+  <input id="loginPhone" type="tel" placeholder="Ampidiro miaraka amin'ny code pays">
 
-<button class="btn" onclick="login()">MIDITRA</button>
+  <label>Tenimiafina</label>
+  <input id="loginPassword" type="password" placeholder="Tenimiafina">
 
+  <button class="btn" onclick="login()">MIDITRA</button>
   <p id="loginMessage" class="message"></p>
  </div>
-</section><!-- FARITRA REHEFA TAFIDITRA --><div id="memberScreen" class="hidden"><header class="top">
+</section>
+
+<div id="memberScreen" class="hidden">
+
+<header class="top">
  <h2>🌍 MADA MLALAO INTERNA</h2>
  <p>Bienvenue sur votre espace membre</p>
-</header><main class="container"><!-- ACCUEIL --><section id="pageHome">
+</header>
+
+<main class="container">
+
+<section id="pageHome">
  <div class="welcome">
   <h2>Bienvenue !</h2>
   <p>Votre espace membre MADA MLALAO INTERNA</p>
- </div> <div class="balance">
+ </div>
+
+ <div class="balance">
   <small>MON SOLDE</small>
   <strong id="homeBalance">0.00 $</strong>
   <small>Solde affiché après confirmation par le serveur</small>
- </div> <div class="action-grid">
-  <button class="action" onclick="goTo('deposit')">
+ </div>
+
+ <div class="action-grid">
+  <button class="action" onclick="goTo('Deposit')">
    <span>💳</span>RECHARGE
   </button>
-  <button class="action" onclick="goTo('withdraw')">
+  <button class="action" onclick="goTo('Withdraw')">
    <span>💸</span>RETRAIT
   </button>
- </div> <div class="card">
+ </div>
+
+ <div class="card">
   <h3>Informations</h3>
   <p style="font-size:13px;color:#666">
    Ny dépôt sy retrait dia dinihin'ny Admin.
@@ -167,35 +156,49 @@ font-size:11px;font-weight:bold;
   </p>
   <p style="font-size:12px;color:#888">Service Admin : 9h - 18h</p>
  </div>
-</section><!-- RECHARGE --><section id="pageDeposit" class="hidden">
+</section>
+
+<section id="pageDeposit" class="hidden">
  <div class="card">
-  <h3>💳 RECHARGE / DÉPÔT</h3><label>Mode de paiement</label>
-<select id="depositMethod">
+  <h3>💳 RECHARGE / DÉPÔT</h3>
 
-   <option value="">Choisir le moyen de paiement</option>
-   <option>Orange Money</option>
-   <option>Yas Money</option>
-   <option>Airtel Money</option>
-   <option>USDT - TRC20</option>
-   <option>USDT - BEP20</option>
-   <option>ETH</option>
-   <option>POLYGON</option>
-   <option>BTC</option>
-  </select><label>Montant en USD</label>
-<input id="depositAmount" type="number" min="1" step="0.01" placeholder="Minimum 1 USD">
+  <label>Wallet disponible</label>
+  <select id="depositMethod" onchange="showDepositWallet()">
+   <option value="">Chargement des wallets...</option>
+  </select>
 
-<label>Référence / Transaction ID</label>
-<input id="depositReference" placeholder="Référence du paiement">
+  <div id="depositWalletBox" class="info hidden">
+   <b>Réseau sélectionné :</b>
+   <p id="depositWalletNetwork"></p>
+   <b>Adresse de paiement :</b>
+   <input id="depositWalletAddress" class="wallet-address" readonly>
+   <button class="btn btn-light" onclick="copyDepositWallet()">COPIER L'ADRESSE</button>
+  </div>
 
-<button class="btn btn-green" onclick="sendDeposit()">ENVOYER LA DEMANDE</button>
+  <label>Montant en USD</label>
+  <input id="depositAmount" type="number" min="1" step="0.01" placeholder="Minimum 1 USD">
 
-  <p id="depositMessage" class="message"></p>  <div class="info">Ny fangatahana dia tsy midika fa efa tafiditra ny vola. Miandry fanamarinana avy amin'ny Admin.</div>
+  <label>Référence / Transaction ID</label>
+  <input id="depositReference" placeholder="Référence du paiement">
+
+  <button class="btn btn-green" onclick="sendDeposit()">ENVOYER LA DEMANDE</button>
+
+  <p id="depositMessage" class="message"></p>
+
+  <div class="info">
+   Ny fangatahana dia tsy midika fa efa tafiditra ny vola.
+   Miandry fanamarinana avy amin'ny Admin.
+   Hamarino tsara ny réseau sy ny adiresy alohan'ny handefasana vola.
+  </div>
  </div>
-</section><!-- RETRAIT --><section id="pageWithdraw" class="hidden">
- <div class="card">
-  <h3>💸 RETRAIT</h3><label>Mode de retrait</label>
-<select id="withdrawMethod" onchange="changeWithdrawMethod()">
+</section>
 
+<section id="pageWithdraw" class="hidden">
+ <div class="card">
+  <h3>💸 RETRAIT</h3>
+
+  <label>Mode de retrait</label>
+  <select id="withdrawMethod" onchange="changeWithdrawMethod()">
    <option value="Orange Money">Orange Money</option>
    <option value="Yas Money">Yas Money</option>
    <option value="Airtel Money">Airtel Money</option>
@@ -204,21 +207,31 @@ font-size:11px;font-weight:bold;
    <option value="ETH">ETH</option>
    <option value="POLYGON">POLYGON</option>
    <option value="BTC">BTC</option>
-  </select><label>Numéro ou adresse de réception</label>
-<input id="withdrawAddress" placeholder="Ampidiro ny numéro na adresse">
+  </select>
 
-<label>Montant en USD</label>
-<input id="withdrawAmount" type="number" min="5" step="0.01" placeholder="Minimum 5 USD">
+  <label>Numéro ou adresse de réception</label>
+  <input id="withdrawAddress" placeholder="Ampidiro ny numéro na adresse">
 
-<label>Tenimiafina fisintonana</label>
-<input id="withdrawPassword" type="password" placeholder="Mot de passe retrait">
+  <label>Montant en USD</label>
+  <input id="withdrawAmount" type="number" min="5" step="0.01" placeholder="Minimum 5 USD">
 
-<button class="btn" onclick="sendWithdraw()">DEMANDE RETRAIT</button>
+  <label>Tenimiafina fisintonana</label>
+  <input id="withdrawPassword" type="password" placeholder="Mot de passe retrait">
 
-  <p id="withdrawMessage" class="message"></p>  <div class="info">Ny retrait dia iharan'ny fanamarinana. Tsy maintsy ampy ny solde ary manan-kery ny fangatahana.</div>
+  <button class="btn" onclick="sendWithdraw()">DEMANDE RETRAIT</button>
+  <p id="withdrawMessage" class="message"></p>
+
+  <div class="info">
+   Ny retrait dia iharan'ny fanamarinana.
+   Tsy maintsy ampy ny solde ary manan-kery ny fangatahana.
+  </div>
  </div>
-</section><!-- JEUX --><section id="pageGames" class="hidden">
- <div class="section-title">🎮 NOS JEUX</div> <div class="game-card">
+</section>
+
+<section id="pageGames" class="hidden">
+ <div class="section-title">🎮 NOS JEUX</div>
+
+ <div class="game-card">
   <h3>🎯 LUCKY LOTO</h3>
   <p>Choisissez vos numéros et consultez les règles du jeu.</p>
   <label>Type de participation</label>
@@ -228,11 +241,15 @@ font-size:11px;font-weight:bold;
    <option value="5">Grand - 5.00 $</option>
   </select>
   <button class="btn" onclick="openGame('LUCKY LOTO','lotoStake')">OUVRIR UNE TABLE</button>
- </div> <div class="game-card">
+ </div>
+
+ <div class="game-card">
   <h3>🃏 CARD</h3>
   <p>Jeu de cartes - règles et participation à confirmer.</p>
   <button class="btn" onclick="openGame('CARD')">OUVRIR UNE TABLE</button>
- </div> <div class="game-card">
+ </div>
+
+ <div class="game-card">
   <h3>♥️ RAMI</h3>
   <label>Type de jeu</label>
   <select id="ramiType">
@@ -240,37 +257,55 @@ font-size:11px;font-weight:bold;
    <option>NATUREL</option>
   </select>
   <button class="btn" onclick="openGame('RAMI')">OUVRIR UNE TABLE</button>
- </div> <div class="game-card">
+ </div>
+
+ <div class="game-card">
   <h3>🎲 LUDO</h3>
   <p>Jeu Ludo - règles de participation à consulter.</p>
   <button class="btn" onclick="openGame('LUDO')">OUVRIR UNE TABLE</button>
- </div> <p id="gameMessage" class="message"></p>
-</section><!-- MON COMPTE --><section id="pageAccount" class="hidden">
+ </div>
+
+ <p id="gameMessage" class="message"></p>
+ <div class="info">Mode de démonstration uniquement. Aucun pari en argent réel n'est activé.</div>
+</section>
+
+<section id="pageAccount" class="hidden">
  <div class="card">
   <h3>🤵 MON COMPTE</h3>
   <p>Nom : <b id="accountName">-</b></p>
   <p>Identifiant : <b id="accountId">-</b></p>
   <p>Téléphone : <b id="accountPhone">-</b></p>
   <p>Solde : <b id="accountBalance">0.00 $</b></p>
- </div> <div class="card">
+ </div>
+
+ <div class="card">
   <h3>💬 SUPPORT</h3>
   <label>Votre message</label>
   <input id="supportMessage" placeholder="Soraty eto ny hafatrao">
   <button class="btn" onclick="sendSupport()">ALEFAO ANY AMIN'NY ADMIN</button>
   <p id="supportResult" class="message"></p>
- </div> <div class="card">
+ </div>
+
+ <div class="card">
   <h3>🔗 LIEN D'INVITATION</h3>
   <input id="inviteLink" readonly>
   <button class="btn btn-light" onclick="copyInvite()">COPIER LE LIEN</button>
- </div><button class="btn" onclick="logout()">DÉCONNEXION</button>
+ </div>
 
-</section><!-- HISTORIQUE --><section id="pageHistory" class="hidden">
+ <button class="btn" onclick="logout()">DÉCONNEXION</button>
+</section>
+
+<section id="pageHistory" class="hidden">
  <div class="card">
   <h3>🌉 HISTORIQUE</h3>
   <div id="historyList">Tsy mbola misy historique.</div>
   <button class="btn btn-light" onclick="loadHistory()">ACTUALISER</button>
  </div>
-</section></main><!-- MENU AMBANY --><nav class="bottom-nav">
+</section>
+
+</main>
+
+<nav class="bottom-nav">
  <button class="nav-btn active" data-page="Home" onclick="navigate('Home')">
   <span class="icon">🏛️</span>Accueil
  </button>
@@ -284,15 +319,20 @@ font-size:11px;font-weight:bold;
   <span class="icon">🌉</span>Historique
  </button>
 </nav>
-</div><script>
+
+</div>
+
+<script>
 let authToken = sessionStorage.getItem("mada_token") || "";
 let member = null;
+let availableDepositWallets = [];
 
 async function api(path,method="GET",data=null){
  const options={
   method,
   headers:{"Content-Type":"application/json"}
  };
+
  if(authToken) options.headers.Authorization="Bearer "+authToken;
  if(data) options.body=JSON.stringify(data);
 
@@ -323,10 +363,12 @@ async function register(){
   message.textContent="Fenoy daholo ny saha rehetra.";
   return;
  }
+
  if(password!==confirm){
   message.textContent="Tsy mitovy ny tenimiafina.";
   return;
  }
+
  if(password.length<8||withdrawalPassword.length<8){
   message.textContent="Tokony ho 8 caractères farafahakeliny ny tenimiafina.";
   return;
@@ -341,6 +383,7 @@ async function register(){
    confirmPassword:confirm,
    withdrawalPassword
   });
+
   message.textContent=result.message||"Voaray ny fisoratana anarana. Afaka miditra ianao.";
   showAuth("login");
  }catch(error){
@@ -353,9 +396,16 @@ async function login(){
  const password=document.getElementById("loginPassword").value;
  const message=document.getElementById("loginMessage");
 
+ if(!phone||!password){
+  message.textContent="Ampidiro ny laharana sy tenimiafina.";
+  return;
+ }
+
  try{
   const result=await api("/login","POST",{numero:phone,password});
+
   if(!result.token) throw new Error("Tsy nahazo token avy amin'ny serveur.");
+
   authToken=result.token;
   sessionStorage.setItem("mada_token",authToken);
   member=result.user||result.member||{};
@@ -368,45 +418,131 @@ async function login(){
 function enterMember(){
  document.getElementById("authScreen").classList.add("hidden");
  document.getElementById("memberScreen").classList.remove("hidden");
+
  document.getElementById("accountName").textContent=member.nom||member.name||"-";
  document.getElementById("accountId").textContent=member.id||"-";
  document.getElementById("accountPhone").textContent=member.numero||member.phone||"-";
  document.getElementById("inviteLink").value=location.origin+"/?ref="+(member.id||"");
+
  navigate("Home");
  refreshBalance();
 }
 
 function navigate(page){
  const pages=["Home","Games","Account","History"];
+
  pages.forEach(p=>{
   document.getElementById("page"+p).classList.toggle("hidden",p!==page);
  });
+
  document.querySelectorAll(".nav-btn").forEach(b=>{
   b.classList.toggle("active",b.dataset.page===page);
  });
+
  if(page==="History") loadHistory();
  if(page==="Account") refreshBalance();
 }
 
 function goTo(page){
- ["Home","Deposit","Withdraw","Games","Account","History"].forEach(p=>{
+ const pages=["Home","Deposit","Withdraw","Games","Account","History"];
+
+ pages.forEach(p=>{
   const el=document.getElementById("page"+p);
   if(el) el.classList.add("hidden");
  });
+
  const target=document.getElementById("page"+page);
  if(target) target.classList.remove("hidden");
+
+ if(page==="Deposit") loadDepositWallets();
 }
 
 async function refreshBalance(){
  try{
   const result=await api("/me");
   const balance=Number(result.solde??result.balance??0).toFixed(2)+" $";
+
   document.getElementById("homeBalance").textContent=balance;
   document.getElementById("accountBalance").textContent=balance;
+ }catch(error){}
+}
+
+/* WALLET DE DEPOT */
+
+async function loadDepositWallets(){
+ const select=document.getElementById("depositMethod");
+ const box=document.getElementById("depositWalletBox");
+
+ select.innerHTML='<option value="">Chargement des wallets...</option>';
+ box.classList.add("hidden");
+ availableDepositWallets=[];
+
+ try{
+  const result=await api("/wallets");
+  availableDepositWallets=result.wallets||[];
+
+  select.innerHTML='<option value="">Choisir un wallet disponible</option>';
+
+  availableDepositWallets.forEach(wallet=>{
+   const network=wallet.network||wallet.name||wallet.type||wallet.label||"";
+   const address=wallet.address||wallet.wallet_address||"";
+
+   if(!network||!address) return;
+
+   const option=document.createElement("option");
+   option.value=network;
+   option.textContent=network;
+   select.appendChild(option);
+  });
+
+  if(select.options.length===1){
+   select.innerHTML='<option value="">Aucun wallet disponible</option>';
+  }
  }catch(error){
-  // Tsy ovaina ny solde raha tsy mahazo valiny avy amin'ny serveur.
+  select.innerHTML='<option value="">Impossible de charger les wallets</option>';
+  document.getElementById("depositMessage").textContent=error.message;
  }
 }
+
+function showDepositWallet(){
+ const selected=document.getElementById("depositMethod").value;
+ const box=document.getElementById("depositWalletBox");
+
+ const wallet=availableDepositWallets.find(w=>
+  (w.network||w.name||w.type||w.label)===selected
+ );
+
+ if(!wallet){
+  box.classList.add("hidden");
+  return;
+ }
+
+ document.getElementById("depositWalletNetwork").textContent=
+  wallet.network||wallet.name||wallet.type||wallet.label;
+
+ document.getElementById("depositWalletAddress").value=
+  wallet.address||wallet.wallet_address||"";
+
+ box.classList.remove("hidden");
+}
+
+function copyDepositWallet(){
+ const input=document.getElementById("depositWalletAddress");
+
+ if(!input.value){
+  alert("Aucune adresse disponible.");
+  return;
+ }
+
+ input.select();
+ input.setSelectionRange(0,99999);
+
+ navigator.clipboard.writeText(input.value)
+  .then(()=>alert("Adresse copiée !"))
+  .catch(()=>alert("Adikao tanana ilay adresse."));
+}
+
+/* DEMANDE DE DEPOT */
 
 async function sendDeposit(){
  const method=document.getElementById("depositMethod").value;
@@ -415,19 +551,30 @@ async function sendDeposit(){
  const message=document.getElementById("depositMessage");
 
  if(!method||!reference||!Number.isFinite(amount)||amount<1){
-  message.textContent="Jereo ny fomba fandoavana, référence ary montant (minimum 1 USD).";
+  message.textContent="Jereo ny wallet, référence ary montant (minimum 1 USD).";
   return;
  }
+
  try{
-  const result=await api("/deposit","POST",{method,montant:amount,reference});
+  const result=await api("/deposit","POST",{
+   method,
+   montant:amount,
+   reference
+  });
+
   message.textContent=result.message||"Voaray ny fangatahana dépôt.";
- }catch(error){message.textContent=error.message}
+ }catch(error){
+  message.textContent=error.message;
+ }
 }
 
 function changeWithdrawMethod(){
  const method=document.getElementById("withdrawMethod").value;
  const field=document.getElementById("withdrawAddress");
- field.placeholder=method.includes("Money")?"Laharana handraisana vola":"Adresse wallet handraisana vola";
+
+ field.placeholder=method.includes("Money")
+  ?"Laharana handraisana vola"
+  :"Adresse wallet handraisana vola";
 }
 
 async function sendWithdraw(){
@@ -441,20 +588,31 @@ async function sendWithdraw(){
   message.textContent="Fenoy tsara ny saha. Minimum retrait : 5 USD.";
   return;
  }
+
  try{
-  const result=await api("/withdraw","POST",{method,address,montant:amount,withdrawalPassword});
+  const result=await api("/withdraw","POST",{
+   method,
+   address,
+   montant:amount,
+   withdrawalPassword
+  });
+
   message.textContent=result.message||"Voaray ny fangatahana retrait.";
- }catch(error){message.textContent=error.message}
+ }catch(error){
+  message.textContent=error.message;
+ }
 }
 
 async function openGame(game,stakeField){
  const message=document.getElementById("gameMessage");
  const stake=stakeField?Number(document.getElementById(stakeField).value):null;
- const extra=game==="RAMI"?{type:document.getElementById("ramiType").value}:{};
+ const extra=game==="RAMI"
+  ?{type:document.getElementById("ramiType").value}
+  :{};
 
  try{
   const result=await api("/games/open","POST",{game,stake,...extra});
-  message.textContent=result.message||"Voaray ny fangatahana fanokafana table.";
+  message.textContent=result.message||"Voaray ny fangatahana.";
  }catch(error){
   message.textContent=error.message;
  }
@@ -463,22 +621,33 @@ async function openGame(game,stakeField){
 async function sendSupport(){
  const msg=document.getElementById("supportMessage").value.trim();
  const result=document.getElementById("supportResult");
- if(!msg){result.textContent="Soraty aloha ny hafatra.";return}
+
+ if(!msg){
+  result.textContent="Soraty aloha ny hafatra.";
+  return;
+ }
+
  try{
   const response=await api("/support","POST",{message:msg});
   result.textContent=response.message||"Voaray ny hafatra.";
   document.getElementById("supportMessage").value="";
- }catch(error){result.textContent=error.message}
+ }catch(error){
+  result.textContent=error.message;
+ }
 }
 
 async function loadHistory(){
  const area=document.getElementById("historyList");
+
  try{
   const result=await api("/history");
   const items=result.history||result.items||[];
-  area.innerHTML=items.length?items.map(item=>
-   `<div class="list-item">${escapeText(item.type||item.description||"Activité")} — ${escapeText(item.status||"En attente")} — ${escapeText(item.date||"")}</div>`
-  ).join(""):"Tsy mbola misy historique.";
+
+  area.innerHTML=items.length
+   ?items.map(item=>
+    `<div class="list-item">${escapeText(item.type||item.description||"Activité")} — ${escapeText(item.status||"En attente")} — ${escapeText(item.date||"")}</div>`
+   ).join("")
+   :"Tsy mbola misy historique.";
  }catch(error){
   area.textContent="Tsy mbola azo ny historique avy amin'ny serveur.";
  }
@@ -494,6 +663,7 @@ function copyInvite(){
  const input=document.getElementById("inviteLink");
  input.select();
  input.setSelectionRange(0,99999);
+
  navigator.clipboard.writeText(input.value)
   .then(()=>alert("Lien copié"))
   .catch(()=>alert("Tsy afaka naka copie. Azafady, adikao tanana."));
@@ -505,5 +675,7 @@ function logout(){
  member=null;
  location.reload();
 }
-</script></body>
+</script>
+
+</body>
 </html>
