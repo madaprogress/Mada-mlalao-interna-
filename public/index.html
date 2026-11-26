@@ -12,7 +12,7 @@ label{font-size:12px;font-weight:800;display:block;margin:14px 0 6px;color:#ccc}
 input,select,textarea{width:100%;padding:13px;border:1px solid #333;border-radius:12px;background:#111;color:#fff;outline:none}
 input::placeholder,textarea::placeholder{color:#666}select option{background:#111;color:#fff}
 button{width:100%;padding:14px;border:0;border-radius:12px;background:#ff6b00;color:#fff;font-weight:900;margin-top:10px}button.yellow{background:#ff6b00;color:#fff}button.green{background:#16a34a}button.blue{background:#2563eb}button.dark{background:#333}button.grey{background:#444}
-.hidden{display:none!important}.msg{min-height:18px;font-size:14px;color:#fff}
+.hidden{display:none}.msg{min-height:18px;font-size:14px;color:#fff}
 .soldeTop{background:linear-gradient(90deg,#ff6b00,#ff8c00);color:#fff;border-radius:16px;padding:18px;text-align:center}.soldeTop b{font-size:34px}
 .iconsRow{display:flex;gap:8px}.iconsRow div{flex:1;text-align:center;background:#1a1a1a;border-radius:14px;padding:12px 4px;font-size:12px;font-weight:700;cursor:pointer;border:2px solid #2a2a2a;color:#fff}.iconsRow div.active{border-color:#ff6b00;background:#2a1400}.iconsRow span{display:block;font-size:28px}
 .numGrid{display:flex;flex-wrap:wrap;gap:6px}.numGrid button{width:42px;height:42px;border-radius:50%;background:#2a2a2a;color:#fff;margin:0;padding:0}.numGrid button.sel{background:#ff6b00;color:#fff}
@@ -24,13 +24,11 @@ button{width:100%;padding:14px;border:0;border-radius:12px;background:#ff6b00;co
 .bloc-sub{text-align:center;font-size:12px;color:#ccc;margin:0 0 8px}
 .row-pays-numero{display:flex;gap:8px}.row-pays-numero select{flex:0 0 135px}.row-pays-numero input{flex:1}
 .link-connection{color:#ff6b00;font-weight:900;text-align:center;display:block;margin-top:12px;cursor:pointer;text-decoration:underline;font-size:15px}
-#debugBox{background:#ffcc00;color:#000;font-weight:900;text-align:center;padding:10px;border-radius:10px;margin-bottom:10px;font-size:14px}
 </style></head><body><div class="bg"></div><header>MADA MLALAO <span>INTERNA</span></header>
 <script>
-function dbg(t){try{var d=document.getElementById("debugBox");if(d)d.textContent=t;}catch(e){} try{alert(t);}catch(e){}}
+function showAuth(m){document.getElementById("registerForm").classList.toggle("hidden",m!=="register");document.getElementById("loginForm").classList.toggle("hidden",m!=="login");document.getElementById("tabRegister").classList.toggle("active",m==="register");document.getElementById("tabLogin").classList.toggle("active",m==="login");}
 window.register=async function(){
-  dbg("KITIKA CREER COMPTE - MIEZAKA...");
-  var msg=document.getElementById("registerMessage"); if(msg)msg.textContent="⏳ MIEZAKA CREATION...";
+  var msg=document.getElementById("registerMessage"); if(msg)msg.textContent="⏳ Miezaka...";
   try{
     var n=document.getElementById("regName").value.trim();
     var ph=document.getElementById("regPhone").value.trim();
@@ -38,49 +36,46 @@ window.register=async function(){
     var cf=document.getElementById("regConfirm").value;
     var wp=document.getElementById("regWithdrawPassword").value||pw;
     var pays=document.getElementById("regPays").value||"261";
-    if(!n||!ph||!pw){ if(msg)msg.textContent="❌ Fenoy Nom + Numero + Mot de passe"; dbg("❌ Fenoy daholo"); return; }
-    if(pw!==cf){ if(msg)msg.textContent="❌ Mot de passe tsy mitovy"; dbg("❌ Mot de passe tsy mitovy"); return; }
+    if(!n||!ph||!pw){ if(msg)msg.textContent="❌ Fenoy Nom + Numero + Mot de passe"; return; }
+    if(pw!==cf){ if(msg)msg.textContent="❌ Mot de passe tsy mitovy"; return; }
     var c=ph.replace(/[\s\-\.]/g,""); if(c.startsWith("+"))c=c.slice(1); if(c.startsWith(pays))c=c.slice(pays.length); if(c.startsWith("0"))c=c.slice(1);
     var numero="+"+pays+c;
-    dbg("⏳ ALEFA @ SERVER : "+numero);
     var r=await fetch("/api/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({nom:n,pays:pays,numero:numero,password:pw,confirmPassword:cf,withdrawalPassword:wp})});
     var t=await r.text(); var j={}; try{j=JSON.parse(t)}catch(e){j={message:t}}
     if(!r.ok) throw new Error(j.message||("Erreur "+r.status));
-    if(msg)msg.textContent="✅ CREATION SUCCÉ !"; dbg("✅ CREATION SUCCÉ !");
-    document.getElementById("registerForm").style.display="none"; document.getElementById("loginForm").style.display="block"; document.getElementById("loginPhone").value=numero;
-  }catch(e){ if(msg)msg.textContent="❌ "+e.message; dbg("❌ "+e.message); }
+    if(msg)msg.textContent="✅ CREATION SUCCÉ - MIDITRA HOAZY...";
+    var r2=await fetch("/api/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({numero:numero,password:pw})});
+    var t2=await r2.text(); var j2={}; try{j2=JSON.parse(t2)}catch(e){j2={message:t2}}
+    if(!r2.ok) throw new Error(j2.message||"Erreur login");
+    sessionStorage.setItem("mada_token",j2.token); location.reload();
+  }catch(e){ if(msg)msg.textContent="❌ "+e.message; alert("❌ "+e.message); }
 };
 window.login=async function(){
-  dbg("KITIKA CONNECTION - MIEZAKA...");
-  var msg=document.getElementById("loginMessage"); if(msg)msg.textContent="⏳ MIEZAKA CONNECTION...";
+  var msg=document.getElementById("loginMessage"); if(msg)msg.textContent="⏳ Miezaka...";
   try{
     var ph=document.getElementById("loginPhone").value.trim();
     var pw=document.getElementById("loginPassword").value;
-    if(!ph||!pw){ if(msg)msg.textContent="❌ Fenoy Numero + Mot de passe"; dbg("❌ Fenoy Numero + Mot de passe"); return; }
-    dbg("⏳ ALEFA @ SERVER LOGIN : "+ph);
+    if(!ph||!pw){ if(msg)msg.textContent="❌ Fenoy Numero + Mot de passe"; return; }
     var r=await fetch("/api/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({numero:ph,password:pw})});
     var t=await r.text(); var j={}; try{j=JSON.parse(t)}catch(e){j={message:t}}
     if(!r.ok) throw new Error(j.message||("Erreur "+r.status));
-    sessionStorage.setItem("mada_token",j.token);
-    if(msg)msg.textContent="✅ MIDITRA..."; dbg("✅ MIDITRA - RELOAD...");
-    location.reload();
-  }catch(e){ if(msg)msg.textContent="❌ "+e.message; dbg("❌ "+e.message); }
+    sessionStorage.setItem("mada_token",j.token); location.reload();
+  }catch(e){ if(msg)msg.textContent="❌ "+e.message; alert("❌ "+e.message); }
 };
-window.showAuth=function(m){document.getElementById("registerForm").classList.toggle("hidden",m!=="register");document.getElementById("loginForm").classList.toggle("hidden",m!=="login");};
 </script>
-<div class="wrap"><div id="debugBox">✅ JS MIANDEHA - Tsindrio CREER COMPTE / CONNECTION</div>
+<div class="wrap">
 <div id="authScreen"><div class="card">
-<div class="tabs"><button id="tabLogin" type="button" onclick="document.getElementById('registerForm').style.display='none';document.getElementById('loginForm').style.display='block';document.getElementById('tabLogin').style.background='#ff6b00';document.getElementById('tabRegister').style.background='#2a2a2a';">CONNECTION</button><button id="tabRegister" type="button" class="active" onclick="document.getElementById('loginForm').style.display='none';document.getElementById('registerForm').style.display='block';document.getElementById('tabRegister').style.background='#ff6b00';document.getElementById('tabLogin').style.background='#2a2a2a';">CREATION</button></div>
+<div class="tabs"><button id="tabLogin" type="button" onclick="showAuth('login')">CONNECTION</button><button id="tabRegister" type="button" class="active" onclick="showAuth('register')">CREATION</button></div>
 <div id="registerForm">
 <label>NOM COMPLET</label><input id="regName" placeholder="Nom complet">
 <label>PAYS + NUMERO</label><div class="row-pays-numero"><select id="regPays"><option value="261">🇲🇬 Madagascar +261</option><option value="33">🇫🇷 France +33</option><option value="262">🇷🇪 Réunion +262</option><option value="230">🇲🇺 Maurice +230</option><option value="269">🇰🇲 Comores +269</option><option value="27">🇿🇦 Afrique Sud +27</option><option value="1">🇨🇦 Canada +1</option><option value="32">🇧🇪 Belgique +32</option><option value="41">🇨🇭 Suisse +41</option><option value="225">🇨🇮 Côte d'Ivoire +225</option><option value="213">🇩🇿 Algérie +213</option><option value="212">🇲🇦 Maroc +212</option><option value="216">🇹🇳 Tunisie +216</option><option value="221">🇸🇳 Sénégal +221</option><option value="1">🇺🇸 USA +1</option><option value="44">🇬🇧 Royaume-Uni +44</option><option value="49">🇩🇪 Allemagne +49</option><option value="34">🇪🇸 Espagne +34</option><option value="39">🇮🇹 Italie +39</option><option value="55">🇧🇷 Brésil +55</option><option value="">🌍 Autre Pays</option></select><input id="regPhone" type="tel" inputmode="tel" placeholder="Numero - Ex: 34 00 000 00"></div>
 <label>MOT DE PASSE</label><input id="regPassword" type="password" placeholder="Mot de passe">
 <label>CONFIRMER MOT DE PASSE</label><input id="regConfirm" type="password" placeholder="Confirmer">
 <label>MOT DE PASSE RETRAIT</label><input id="regWithdrawPassword" type="password" placeholder="Mot de passe retrait">
-<button id="btnRegister" onclick="register()">CREER COMPTE</button><div id="registerMessage" class="msg"></div><span class="link-connection" onclick="document.getElementById('registerForm').style.display='none';document.getElementById('loginForm').style.display='block';document.getElementById('tabLogin').style.background='#ff6b00';document.getElementById('tabRegister').style.background='#2a2a2a';">EFA MANANA COMPTE ? CONNECTION ETO 👉</span></div>
+<button id="btnRegister" onclick="register()">CREER COMPTE</button><div id="registerMessage" class="msg"></div><span class="link-connection" onclick="showAuth('login')">EFA MANANA COMPTE ? CONNECTION ETO 👉</span></div>
 <div id="loginForm" class="hidden">
 <label>NUMERO</label><input id="loginPhone" placeholder="Numero"><label>MOT DE PASSE</label><input id="loginPassword" type="password" placeholder="Mot de passe">
-<button id="btnLogin" onclick="login()">CONNECTION</button><div id="loginMessage" class="msg"></div><span class="link-connection" onclick="document.getElementById('loginForm').style.display='none';document.getElementById('registerForm').style.display='block';document.getElementById('tabRegister').style.background='#ff6b00';document.getElementById('tabLogin').style.background='#2a2a2a';">TSY MANANA COMPTE ? CREATION ETO 👉</span></div></div>
+<button id="btnLogin" onclick="login()">CONNECTION</button><div id="loginMessage" class="msg"></div><span class="link-connection" onclick="showAuth('register')">TSY MANANA COMPTE ? CREATION ETO 👉</span></div></div>
 <div class="card"><button class="grey" style="margin:0" onclick="showAdminBox()">ADMINISTRATIF GENERAL</button><div id="adminLoginBox" class="hidden"><input id="adminKeyInput" placeholder="Mot pass fidirana Admin" style="margin-top:10px"><button class="dark" onclick="adminLogin()">HIDITRA ADMIN</button></div></div></div>
 <div id="memberScreen" class="hidden">
 <div class="soldeTop">SOLDE DISPONIBLE<br><b id="balanceText">0</b> USD<br><span id="accountName">-</span> | ID: <span id="accountId">-</span> | <span id="accountPhone">-</span></div><br>
