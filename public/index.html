@@ -24,12 +24,12 @@ button{width:100%;padding:14px;border:0;border-radius:14px;background:#ef4444;co
 <div class="tabs"><button id="tabLogin" onclick="showAuth('login')">CONNECTION</button><button id="tabRegister" class="active" onclick="showAuth('register')">CREATION</button></div>
 <div id="registerForm">
 <label>NOM COMPLET</label><input id="regName" placeholder="Nom complet">
-<label>NUMERO (depend pays)</label><div style="display:flex;gap:6px"><select id="regPays" style="width:135px"></select><input id="regPhone" placeholder="Numero"></div>
+<label>NUMERO (depend pays)</label><div style="display:flex;gap:6px"><select id="regPays" style="width:135px"></select><input id="regPhone" 
 <label>MOT DE PASSE</label><input id="regPassword" type="password" placeholder="Mot de passe">
 <label>CONFIRMER MOT DE PASSE</label><input id="regConfirm" type="password" placeholder="Confirmer">
 <label>MOT DE PASSE RETRAIT</label><input id="regWithdrawPassword" type="password" placeholder="Mot de passe retrait">
 <button onclick="register()">CREER COMPTE</button><div id="registerMessage" class="msg"></div></div>
-<div id="loginForm" class="hidden">
+<div id="loginFo
 <label>NUMERO</label><input id="loginPhone" placeholder="Numero"><label>MOT DE PASSE</label><input id="loginPassword" type="password" placeholder="Mot de passe">
 <button onclick="login()">CONNECTION</button><div id="loginMessage" class="msg"></div></div></div>
 <div class="card"><button class="grey" style="margin:0" onclick="showAdminBox()">ADMINISTRATIF GENERAL</button><div id="adminLoginBox" class="hidden"><input id="adminKeyInput" placeholder="Mot pass fidirana Admin" style="margin-top:10px"><button class="dark" onclick="adminLogin()">HIDITRA ADMIN</button></div></div></div>
