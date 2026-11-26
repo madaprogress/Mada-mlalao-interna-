@@ -1,9 +1,17 @@
-const express=require("express");const path=require("path");const {Pool}=require("pg");const bcrypt=require("bcryptjs");const jwt=require("jsonwebtoken");const helmet=require("helmet");const {rateLimit}=require("express-rate-limit");
-const app=express();const PORT=process.env.PORT||10000;
+const express=require("express");
+const path=require("path");
+const {Pool}=require("pg");
+const bcrypt=require("bcryptjs");
+const jwt=require("jsonwebtoken");
+const {rateLimit}=require("express-rate-limit");
+const app=express();
+const PORT=process.env.PORT||10000;
 const JWT_SECRET=process.env.JWT_SECRET||"MADA-MLALAO-2026-SECRET-XYZ-123";
 const ADMIN_KEY=process.env.ADMIN_API_KEY||"ADMIN-MADA-2026-KEY-456";
 const pool=new Pool({connectionString:process.env.DATABASE_URL,ssl:{rejectUnauthorized:false}});
-app.use(helmet({contentSecurityPolicy:false}));app.use(express.json({limit:"1mb"}));app.use(express.static(__dirname));app.use("/api/",rateLimit({windowMs:15*60*1000,limit:300}));
+app.use(express.json({limit:"1mb"}));
+app.use(express.static(__dirname));
+app.use("/api/",rateLimit({windowMs:15*60*1000,limit:300}));
 const networks=["T.BEP20 - USD","T.TRC20 - USD","BNB","TRX","S.BEP20 - USD","T.POLYGON - USD","T.ETH - USD","S.POLYGON - USD","S.ETH - USD","ETH","POLYGON","ETH - PYUSD","Yas - Paul","Airtel - Jean Romario","Orange - Jean Romario"];
 async function initDatabase(){
 await pool.query(`CREATE TABLE IF NOT EXISTS members (id SERIAL PRIMARY KEY,nom VARCHAR(150) NOT NULL,pays VARCHAR(80) DEFAULT 'Madagascar',numero VARCHAR(40) UNIQUE NOT NULL,password_hash TEXT NOT NULL,withdrawal_hash TEXT NOT NULL,balance NUMERIC(14,2) DEFAULT 0,withdrawal_address TEXT DEFAULT '',created_at TIMESTAMPTZ DEFAULT NOW());
@@ -31,7 +39,7 @@ app.get("/api/my-wallet",auth,async(req,res)=>{try{const w=await pool.query(`SEL
 app.get("/api/my-history",auth,async(req,res)=>{try{const d=await pool.query(`SELECT * FROM deposits WHERE member_id=$1 ORDER BY created_at DESC LIMIT 50`,[req.user.id]);const w=await pool.query(`SELECT * FROM withdrawals WHERE member_id=$1 ORDER BY created_at DESC LIMIT 50`,[req.user.id]);const g=await pool.query(`SELECT * FROM game_history WHERE member_id=$1 ORDER BY created_at DESC LIMIT 50`,[req.user.id]);res.json({ok:true,deposits:d.rows,withdrawals:w.rows,games:g.rows});}catch{res.status(500).json({message:"Erreur"});}});
 app.post("/api/deposit",auth,async(req,res)=>{try{const {method,amount,reference}=req.body;if(!method||!amount||!reference) return res.status(400).json({message:"Fenoy"});const comm=parseFloat(amount)*0.10;await pool.query(`INSERT INTO deposits (member_id,method,amount,reference,commission) VALUES ($1,$2,$3,$4,$5)`,[req.user.id,method,amount,reference,comm]);await pool.query(`INSERT INTO admin_notifications (member_id,type,message,amount) VALUES ($1,'depot',$2,$3)`,[req.user.id,`${req.user.nom} nanao DEPOT ${amount} USD via ${method} - Ref: ${reference} - Commission 10% = ${comm} USD`,amount]);res.json({ok:true,message:`Depot voaray - Commission 10% = ${comm} USD - Miandry validation Admin`});}catch{res.status(500).json({message:"Erreur"});}});
 app.post("/api/withdraw",auth,async(req,res)=>{try{let {method,address,amount,withdrawalPassword}=req.body;if(!address) address=req.user.withdrawal_address;if(!method||!address||!amount||!withdrawalPassword) return res.status(400).json({message:"Fenoy - Mila adresse voatahiry"});const r=await pool.query(`SELECT * FROM members WHERE id=$1`,[req.user.id]);if(!await bcrypt.compare(withdrawalPassword,r.rows[0].withdrawal_hash)) return res.status(401).json({message:"Mot de passe retrait diso"});if(parseFloat(req.user.balance)<parseFloat(amount)) return res.status(400).json({message:"Solde tsy ampy"});await pool.query(`INSERT INTO withdrawals (member_id,method,address,amount) VALUES ($1,$2,$3,$4)`,[req.user.id,method,address,amount]);await pool.query(`INSERT INTO admin_notifications (member_id,type,message,amount) VALUES ($1,'retrait',$2,$3)`,[req.user.id,`${req.user.nom} nanao RETRAIT ${amount} USD via ${method} vers ${address}`,amount]);res.json({ok:true,message:"Retrait voaray - Admin voampandrina"});}catch{res.status(500).json({message:"Erreur"});}});
-app.get("/api/wallets",async(req,res)=>{const r=await pool.query(`SELECT network,address,active FROM admin_wallets ORDER BY id`);res.json({ok:true,wallets:r.rows});});
+app.get("/api/wallets",async(req,res)=>{try{const r=await pool.query(`SELECT network,address,active FROM admin_wallets ORDER BY id`);res.json({ok:true,wallets:r.rows});}catch{res.json({ok:true,wallets:[]});}});
 app.get("/api/principal-wallet",async(req,res)=>{const r=await pool.query(`SELECT * FROM principal_wallet WHERE id=1`);res.json({ok:true,principal:r.rows[0]});});
 app.post("/api/save-address",auth,async(req,res)=>{try{if(!req.body.address) return res.status(400).json({message:"Fenoy adresse"});await pool.query(`UPDATE members SET withdrawal_address=$1 WHERE id=$2`,[req.body.address,req.user.id]);res.json({ok:true,message:"Adresse voatahiry - tsy miova intsony"});}catch{res.status(500).json({message:"Erreur"});}});
 app.get("/api/my-address",auth,async(req,res)=>{const r=await pool.query(`SELECT withdrawal_address FROM members WHERE id=$1`,[req.user.id]);res.json({ok:true,address:r.rows[0].withdrawal_address||""});});
