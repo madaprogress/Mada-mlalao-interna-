@@ -1,97 +1,58 @@
-<script>
-let authToken=sessionStorage.getItem("mada_token")||"";
-let member=null;
-let availableDepositWallets=[];
+<!DOCTYPE html>
+<html lang="mg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MADA MLALAO INTERNA</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial;background:#f1f5f9;color:#111}
+header{background:#0f172a;color:#fff;padding:14px;text-align:center;font-weight:900;font-size:20px}
+.wrap{max-width:520px;margin:0 auto;padding:12px}
+.card{background:#fff;border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+h2{margin:0 0 10px}input,select,textarea{width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:10px;font-size:15px}
+button{width:100%;padding:12px;border:0;border-radius:10px;background:#16a34a;color:#fff;font-weight:800;font-size:15px;margin-top:8px;cursor:pointer}
+button.blue{background:#2563eb}button.dark{background:#0f172a}button.orange{background:#ea580c}button.grey{background:#64748b}
+.tabs{display:flex;gap:8px} .tabs button{flex:1;background:#e2e8f0;color:#111} .tabs button.active{background:#0f172a;color:#fff}
+.nav{display:flex;gap:6px;flex-wrap:wrap} .nav button{flex:1 1 30%;background:#e2e8f0;color:#111;padding:10px;font-size:13px} .nav button.active{background:#16a34a;color:#fff}
+.hidden{display:none!important}.msg{font-size:14px;min-height:20px;margin-top:6px}.bal{font-size:32px;font-weight:900;color:#16a34a;text-align:center}
+.wallet{border:1px solid #e2e8f0;border-radius:10px;padding:10px;margin:6px 0;background:#f8fafc}.wallet b{display:block}.small{font-size:12px;color:#64748b;word-break:break-all}
+.item{border-bottom:1px solid #eee;padding:8px 0;font-size:14px}
+.admin{background:#fff7ed}
+</style>
+</head>
+<body>
+<header>🌍 MADA MLALAO INTERNA</header>
+<div class="wrap">
 
-async function api(path,method="GET",data=null){
-  let o={method,headers:{"Content-Type":"application/json"}};
-  if(authToken) o.headers.Authorization="Bearer "+authToken;
-  if(data) o.body=JSON.stringify(data);
-  let controller=new AbortController();
-  let timeout=setTimeout(()=>controller.abort(),15000);
-  o.signal=controller.signal;
-  try{
-    let r=await fetch("/api"+path,o);
-    clearTimeout(timeout);
-    let text=await r.text();
-    let j={}; try{j=JSON.parse(text);}catch(e){j={message:text.slice(0,200)}}
-    if(!r.ok) throw new Error(j.message||("Erreur "+r.status));
-    return j;
-  }catch(e){
-    clearTimeout(timeout);
-    if(e.name==="AbortError") throw new Error("Serveur tsy mamaly - jereo Logs @ Render - DB mbola tsy mandeha?");
-    throw e;
-  }
-}
+<!-- AUTH -->
+<div id="authScreen">
+<div class="card">
+<div class="tabs"><button id="tabRegister" class="active" onclick="showAuth('register')">MISORATRA</button><button id="tabLogin" onclick="showAuth('login')">MIDITRA</button></div>
 
-function showAuth(m){
-  document.getElementById("registerForm").classList.toggle("hidden",m!=="register");
-  document.getElementById("loginForm").classList.toggle("hidden",m!=="login");
-  document.getElementById("tabRegister").classList.toggle("active",m==="register");
-  document.getElementById("tabLogin").classList.toggle("active",m==="login");
-}
-function showAdminBox(){document.getElementById("adminLoginBox").classList.remove("hidden");}
+<div id="registerForm">
+<h2>Misoratra</h2>
+<input id="regName" placeholder="Anarana feno">
+<input id="regPhone" placeholder="Numero - ohatra 340262175">
+<input id="regPassword" type="password" placeholder="Mot de passe (4+)">
+<input id="regConfirm" type="password" placeholder="Confirmer mot de passe">
+<input id="regWithdrawPassword" type="password" placeholder="Mot de passe retrait (4+)">
+<button onclick="register()">MISORATRA</button>
+<div id="registerMessage" class="msg"></div>
+</div>
 
-function cleanPhone(phone,cc){
-  let p=phone.replace(/[\s\-\.]/g,"");
-  if(p.startsWith("+")) p=p.slice(1);
-  if(p.startsWith("261")) p=p.slice(3);
-  if(p.startsWith("0")) p=p.slice(1);
-  return p;
-}
+<div id="loginForm" class="hidden">
+<h2>Miditra</h2>
+<input id="loginPhone" placeholder="+261...">
+<input id="loginPassword" type="password" placeholder="Mot de passe">
+<button onclick="login()">MIDITRA</button>
+<div id="loginMessage" class="msg"></div>
+</div>
+</div>
+<div class="card"><button class="grey" onclick="showAdminBox()">ADMIN - Tsindrio eto</button>
+<div id="adminLoginBox" class="hidden"><input id="adminKeyInput" placeholder="Admin Key"><button class="dark" onclick="adminLogin()">HIDITRA ADMIN</button><div id="adminLoginMsg" class="msg"></div></div>
+</div>
+</div>
 
-async function register(){
-  let name=document.getElementById("regName").value.trim();
-  let cc=document.getElementById("countryCode").value;
-  let phone=document.getElementById("regPhone").value.trim();
-  let pw=document.getElementById("regPassword").value;
-  let cf=document.getElementById("regConfirm").value;
-  let wp=document.getElementById("regWithdrawPassword").value;
-  let msg=document.getElementById("registerMessage");
-  msg.style.color="#b91c1c";
-  if(!name||!phone||!pw||!wp){msg.textContent="Fenoy daholo ny saha rehetra.";return;}
-  if(pw!==cf){msg.textContent="Tsy mitovy ny tenimiafina.";return;}
-  if(pw.length<4||wp.length<4){msg.textContent="4 caracteres farafahakeliny.";return;}
-  let clean=cleanPhone(phone,cc);
-  if(clean.length<9){msg.textContent="Numero tsy feno - ohatra 340262175";return;}
-  msg.style.color="#159447";
-  msg.textContent="⏳ Miandry serveur... aza mikitika...";
-  try{
-    let r=await api("/register","POST",{nom:name,pays:"Madagascar",numero:"+261"+clean,password:pw,confirmPassword:cf,withdrawalPassword:wp});
-    msg.textContent="✅ "+(r.message||"Vita! Afaka miditra ianao.");
-    alert("✅ Compte voa-créer! Midira izao.");
-    showAuth("login");
-    document.getElementById("loginPhone").value="+261"+clean;
-  }catch(e){
-    msg.style.color="#b91c1c";
-    msg.textContent="❌ "+e.message;
-    alert("❌ "+e.message);
-  }
-}
-
-async function login(){
-  let phone=document.getElementById("loginPhone").value.trim();
-  let pw=document.getElementById("loginPassword").value;
-  let msg=document.getElementById("loginMessage");
-  if(!phone||!pw){msg.textContent="Ampidiro ny laharana sy tenimiafina.";return;}
-  msg.textContent="⏳ Miandry...";
-  try{
-    let clean=cleanPhone(phone,"+261");
-    // Andramo @ format 2 - raha tsy mety ny iray, andramo ny iray
-    let r;
-    try{ r=await api("/login","POST",{numero:"+261"+clean,password:pw}); }
-    catch(e1){ r=await api("/login","POST",{numero:clean,password:pw}); }
-    if(!r.token) throw new Error("Tsy nahazo token.");
-    authToken=r.token; sessionStorage.setItem("mada_token",authToken);
-    member=r.user||{}; enterMember();
-  }catch(e){msg.textContent="❌ "+e.message; alert("❌ "+e.message);}
-}
-
-function enterMember(){
-  document.getElementById("authScreen").classList.add("hidden");
-  document.getElementById("memberScreen").classList.remove("hidden");
-  document.getElementById("accountName").textContent=member.nom||"-";
-  document.getElementById("accountId").textContent=member.id||"-";
-  document.getElementById("accountPhone").textContent=member.numero||"-";
-  document.getElementById("inviteLink").value=location.origin+"/?ref="+(member.id||"");
-  navigate("Home"); refreshBalance(); loadMyAddress();
+<!-- MEMBER -->
+<div id="memberScreen" class="hidden">
+<div class="card"><div style="display:flex;justify-content:space-between"><b id="accountName">-</b><button
