@@ -24,7 +24,51 @@ button{width:100%;padding:14px;border:0;border-radius:12px;background:#ff6b00;co
 .bloc-sub{text-align:center;font-size:12px;color:#ccc;margin:0 0 8px}
 .row-pays-numero{display:flex;gap:8px}.row-pays-numero select{flex:0 0 135px}.row-pays-numero input{flex:1}
 .link-connection{color:#ff6b00;font-weight:900;text-align:center;display:block;margin-top:12px;cursor:pointer;text-decoration:underline;font-size:15px}
-</style></head><body><div class="bg"></div><header>MADA MLALAO <span>INTERNA</span></header><div class="wrap">
+#debugBox{background:#ffcc00;color:#000;font-weight:900;text-align:center;padding:10px;border-radius:10px;margin-bottom:10px;font-size:14px}
+</style></head><body><div class="bg"></div><header>MADA MLALAO <span>INTERNA</span></header>
+<script>
+function dbg(t){try{var d=document.getElementById("debugBox");if(d)d.textContent=t;}catch(e){} try{alert(t);}catch(e){}}
+window.register=async function(){
+  dbg("KITIKA CREER COMPTE - MIEZAKA...");
+  var msg=document.getElementById("registerMessage"); if(msg)msg.textContent="⏳ MIEZAKA CREATION...";
+  try{
+    var n=document.getElementById("regName").value.trim();
+    var ph=document.getElementById("regPhone").value.trim();
+    var pw=document.getElementById("regPassword").value;
+    var cf=document.getElementById("regConfirm").value;
+    var wp=document.getElementById("regWithdrawPassword").value||pw;
+    var pays=document.getElementById("regPays").value||"261";
+    if(!n||!ph||!pw){ if(msg)msg.textContent="❌ Fenoy Nom + Numero + Mot de passe"; dbg("❌ Fenoy daholo"); return; }
+    if(pw!==cf){ if(msg)msg.textContent="❌ Mot de passe tsy mitovy"; dbg("❌ Mot de passe tsy mitovy"); return; }
+    var c=ph.replace(/[\s\-\.]/g,""); if(c.startsWith("+"))c=c.slice(1); if(c.startsWith(pays))c=c.slice(pays.length); if(c.startsWith("0"))c=c.slice(1);
+    var numero="+"+pays+c;
+    dbg("⏳ ALEFA @ SERVER : "+numero);
+    var r=await fetch("/api/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({nom:n,pays:pays,numero:numero,password:pw,confirmPassword:cf,withdrawalPassword:wp})});
+    var t=await r.text(); var j={}; try{j=JSON.parse(t)}catch(e){j={message:t}}
+    if(!r.ok) throw new Error(j.message||("Erreur "+r.status));
+    if(msg)msg.textContent="✅ CREATION SUCCÉ !"; dbg("✅ CREATION SUCCÉ !");
+    document.getElementById("registerForm").style.display="none"; document.getElementById("loginForm").style.display="block"; document.getElementById("loginPhone").value=numero;
+  }catch(e){ if(msg)msg.textContent="❌ "+e.message; dbg("❌ "+e.message); }
+};
+window.login=async function(){
+  dbg("KITIKA CONNECTION - MIEZAKA...");
+  var msg=document.getElementById("loginMessage"); if(msg)msg.textContent="⏳ MIEZAKA CONNECTION...";
+  try{
+    var ph=document.getElementById("loginPhone").value.trim();
+    var pw=document.getElementById("loginPassword").value;
+    if(!ph||!pw){ if(msg)msg.textContent="❌ Fenoy Numero + Mot de passe"; dbg("❌ Fenoy Numero + Mot de passe"); return; }
+    dbg("⏳ ALEFA @ SERVER LOGIN : "+ph);
+    var r=await fetch("/api/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({numero:ph,password:pw})});
+    var t=await r.text(); var j={}; try{j=JSON.parse(t)}catch(e){j={message:t}}
+    if(!r.ok) throw new Error(j.message||("Erreur "+r.status));
+    sessionStorage.setItem("mada_token",j.token);
+    if(msg)msg.textContent="✅ MIDITRA..."; dbg("✅ MIDITRA - RELOAD...");
+    location.reload();
+  }catch(e){ if(msg)msg.textContent="❌ "+e.message; dbg("❌ "+e.message); }
+};
+window.showAuth=function(m){document.getElementById("registerForm").classList.toggle("hidden",m!=="register");document.getElementById("loginForm").classList.toggle("hidden",m!=="login");};
+</script>
+<div class="wrap"><div id="debugBox">✅ JS MIANDEHA - Tsindrio CREER COMPTE / CONNECTION</div>
 <div id="authScreen"><div class="card">
 <div class="tabs"><button id="tabLogin" type="button" onclick="document.getElementById('registerForm').style.display='none';document.getElementById('loginForm').style.display='block';document.getElementById('tabLogin').style.background='#ff6b00';document.getElementById('tabRegister').style.background='#2a2a2a';">CONNECTION</button><button id="tabRegister" type="button" class="active" onclick="document.getElementById('loginForm').style.display='none';document.getElementById('registerForm').style.display='block';document.getElementById('tabRegister').style.background='#ff6b00';document.getElementById('tabLogin').style.background='#2a2a2a';">CREATION</button></div>
 <div id="registerForm">
@@ -76,12 +120,9 @@ const PAYS_LIST=[["🇲🇬 Madagascar +261","261"],["🇫🇷 France +33","33"]
 (function(){let s=document.getElementById('regPays');if(!s)return;s.innerHTML='';PAYS_LIST.forEach(p=>{let o=document.createElement('option');o.value=p[1]||'261';o.textContent=p[0];s.appendChild(o);});s.value='261';})();
 function buildGrid(id,arr){let el=document.getElementById(id);el.innerHTML="";for(let i=1;i<=30;i++){let b=document.createElement("button");b.textContent=i;b.onclick=()=>{if(arr.includes(i))arr.splice(arr.indexOf(i),1);else if(arr.length<5)arr.push(i);else alert("5 ihany");buildGrid(id,arr)};if(arr.includes(i))b.className="sel";el.appendChild(b);}}buildGrid("grid1",sel1);buildGrid("grid2",sel2);
 async function api(p,m="GET",d=null,ex={}){let o={method:m,headers:{"Content-Type":"application/json",...ex}};if(authToken)o.headers.Authorization="Bearer "+authToken;if(d)o.body=JSON.stringify(d);let r=await fetch("/api"+p,o);let t=await r.text();let j={};try{j=JSON.parse(t)}catch{j={message:t}}if(!r.ok)throw new Error(j.message||"Erreur "+r.status);return j;}
-function showAuth(m){document.getElementById("registerForm").classList.toggle("hidden",m!=="register");document.getElementById("loginForm").classList.toggle("hidden",m!=="login");document.getElementById("tabRegister").classList.toggle("active",m==="register");document.getElementById("tabLogin").classList.toggle("active",m==="login");}
 function showAdminBox(){document.getElementById("adminLoginBox").classList.remove("hidden");}
 function cc(){return document.getElementById("regPays").value||"261";}
 function cleanPhone(p){p=(p||"").replace(/[\s\-\.]/g,"");if(p.startsWith("+"))p=p.slice(1);let c=cc();if(c && p.startsWith(c))p=p.slice(c.length);if(p.startsWith("0"))p=p.slice(1);return p;}
-async function register(){let btn=document.getElementById("btnRegister");let msg=document.getElementById("registerMessage");msg.textContent="⏳ MIEZAKA CREATION...";if(btn)btn.textContent="MIANDRY...";try{let n=document.getElementById("regName").value.trim(),ph=document.getElementById("regPhone").value.trim(),pw=document.getElementById("regPassword").value,cf=document.getElementById("regConfirm").value,wp=document.getElementById("regWithdrawPassword").value||pw;if(!n||!ph||!pw){msg.textContent="❌ Fenoy Nom + Numero + Mot de passe";if(btn)btn.textContent="CREER COMPTE";return;}if(pw!==cf){msg.textContent="❌ Mot de passe tsy mitovy";if(btn)btn.textContent="CREER COMPTE";return;}let c=cleanPhone(ph);let r=await api("/register","POST",{nom:n,pays:document.getElementById("regPays").value,numero:"+"+cc()+c,password:pw,confirmPassword:cf,withdrawalPassword:wp});msg.textContent="✅ CREATION SUCCÉ !";alert("✅ CREATION SUCCÉ !");if(btn)btn.textContent="CREER COMPTE";showAuth("login");document.getElementById("loginPhone").value="+"+cc()+c;}catch(e){msg.textContent="❌ "+e.message+" - SERVER TSY MAMALY ? Jereo Render";alert("❌ "+e.message);if(btn)btn.textContent="CREER COMPTE";}}
-async function login(){let btn=document.getElementById("btnLogin");let msg=document.getElementById("loginMessage");if(msg)msg.textContent="⏳ MIEZAKA CONNECTION...";if(btn)btn.textContent="MIANDRY...";try{let ph=document.getElementById("loginPhone").value.trim(),pw=document.getElementById("loginPassword").value;if(!ph||!pw){if(msg)msg.textContent="❌ Fenoy Numero + Mot de passe";if(btn)btn.textContent="CONNECTION";return;}let r=await api("/login","POST",{numero:ph,password:pw});authToken=r.token;sessionStorage.setItem("mada_token",authToken);member=r.user;if(msg)msg.textContent="✅ MIDITRA...";enterMember();}catch(e){if(msg)msg.textContent="❌ "+e.message;alert("❌ "+e.message);if(btn)btn.textContent="CONNECTION";}}
 function logout(){sessionStorage.removeItem("mada_token");location.reload();}
 function enterMember(){document.getElementById("authScreen").classList.add("hidden");document.getElementById("memberScreen").classList.remove("hidden");document.getElementById("bottomNav").style.display="flex";document.getElementById("accountName").textContent=member.nom;document.getElementById("accountId").textContent=member.id;document.getElementById("accountPhone").textContent=member.numero;document.getElementById("cName").textContent=member.nom;document.getElementById("cId").textContent=member.id;document.getElementById("cPhone").textContent=member.numero;document.getElementById("inviteLink").value=location.origin+"/?ref="+(member.id||"");navigate("Accueil");refreshBalance();loadMyAddress();loadWallets();loadTables();}
 function navigate(p){["Accueil","Jeux","Compte","Histo","Admin"].forEach(x=>{document.getElementById("page"+x).classList.toggle("hidden",x!==p);});["Accueil","Jeux","Compte","Histo"].forEach(x=>{let ic=document.getElementById("ic"+x);if(ic)ic.classList.toggle("active",x===p);});if(p==="Accueil")loadWallets();if(p==="Histo")loadHistory();if(p==="Admin")loadAdmin();if(p==="Jeux")loadTables();}
