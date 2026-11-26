@@ -1,9 +1,10 @@
-// MADA MLALAO INTERNA - server.js - FENO - MIFANARAKA @ index.html
+// MADA MLALAO INTERNA - server.js - POSTGRESQL - FENO
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const { Pool } = require('pg');
 const app = express();
 const http = require('http').createServer(app);
 const { Server } = require('socket.io');
@@ -13,8 +14,14 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(__dirname));
 
-const JWT_SECRET = "mada-mlalao-secret-2026";
-const ADMIN_KEY = "admin123";
+const JWT_SECRET = process.env.JWT_SECRET || "mada-mlalao-secret-2026";
+const ADMIN_KEY = process.env.ADMIN_KEY || "admin123";
+const DATABASE_URL = process.env.DATABASE_URL;
+
+const pool = new Pool({
+  connectionString: DATABASE_URL,
+  ssl: DATABASE_URL && DATABASE_URL.includes('render.com') ? { rejectUnauthorized: false } : false
+});
 
 let wallets = [
   { network: "YAS MONEY", address: "0340262175 - Nom: Paul", type: "mobile", pays: "MG" },
@@ -35,42 +42,44 @@ let wallets = [
   { network: "BTC", address: "bc1q0x59ej6z66p82fh93suuz4daljcjuthlfl08x5 - Reseau: Bitcoin", type: "crypto" },
 ];
 
-let users = [];
-let deposits = [];
-let withdrawals = [];
-let tables = [];
-let games = [];
-let supports = [];
-let adminNotifications = [];
-let nextId = 1;
-let nextDepId = 1;
-let nextWitId = 1;
+// --- INIT TABLES POSTGRES ---
+async function initDB() {
+  await pool.query(`CREATE TABLE IF NOT EXISTS users(id SERIAL PRIMARY KEY, nom TEXT, pays TEXT, numero TEXT UNIQUE, password TEXT, withdrawal_password TEXT, balance NUMERIC DEFAULT 0, address TEXT DEFAULT '')`);
+  await pool.query(`CREATE TABLE IF NOT EXISTS deposits(id SERIAL PRIMARY KEY, user_id INT, nom TEXT, numero TEXT, method TEXT, amount NUMERIC, reference TEXT, status TEXT DEFAULT 'pending', date TEXT)`);
+  await pool.query(`CREATE TABLE IF NOT EXISTS withdrawals(id SERIAL PRIMARY KEY, user_id INT, nom TEXT, numero TEXT, method TEXT, address TEXT, amount NUMERIC, status TEXT DEFAULT 'pending', date TEXT)`);
+  await pool.query(`CREATE TABLE IF NOT EXISTS tables_tbl(code TEXT PRIMARY KEY, game TEXT, type TEXT, mise NUMERIC, commission NUMERIC, fond NUMERIC, players JSONB DEFAULT '[]', creator INT, creator_nom TEXT, timer TEXT, date TEXT)`);
+  await pool.query(`CREATE TABLE IF NOT EXISTS games(id SERIAL PRIMARY KEY, user_id INT, game TEXT, bet NUMERIC, result TEXT, net NUMERIC, date TEXT)`);
+  await pool.query(`CREATE TABLE IF NOT EXISTS supports(id SERIAL PRIMARY KEY, user_id INT, nom TEXT, numero TEXT, message TEXT, date TEXT)`);
+  await pool.query(`CREATE TABLE IF NOT EXISTS admin_notifs(id SERIAL PRIMARY KEY, type TEXT, message TEXT, date TEXT)`);
+  console.log("DB OK - Tables pretes");
+}
+initDB().catch(e => console.error("DB ERROR", e));
 
-function notifyAdmin(type, message, data) {
-  let n = { id: Date.now(), type, message, data: data || {}, date: new Date().toLocaleString('fr-MG'), lu: false };
-  adminNotifications.unshift(n);
-  if (adminNotifications.length > 100) adminNotifications.pop();
-  io.emit('admin-notif', n);
+function notifyAdmin(type, message) {
+  pool.query(`INSERT INTO admin_notifs(type,message,date) VALUES($1,$2,$3)`, [type, message, new Date().toLocaleString('fr-MG')]).catch(()=>{});
+  io.emit('admin-notif', { type, message });
   console.log("ADMIN:", message);
-  return n;
 }
 function auth(req, res, next) {
   let h = req.headers.authorization || "";
   let token = h.replace("Bearer ", "");
   if (!token) return res.status(401).json({ message: "Tsy connecte" });
-  try { req.user = jwt.verify(token, JWT_SECRET); next(); }
-  catch (e) { return res.status(401).json({ message: "Token tsy mety" }); }
+  try { req.user = jwt.verify(token, JWT_SECRET); next(); } catch (e) { return res.status(401).json({ message: "Token tsy mety" }); }
 }
 function isAdmin(req, res, next) {
   if (req.headers["x-admin-key"] === ADMIN_KEY) return next();
   return res.status(403).json({ message: "Admin ihany" });
 }
-function getUser(req) { return users.find(x => x.id === req.user.id); }
+async function getUser(req) {
+  let r = await pool.query(`SELECT * FROM users WHERE id=$1`, [req.user.id]);
+  return r.rows[0];
+}
+const now = () => new Date().toLocaleString('fr-MG');
 
 app.get("/", (req, res) => {
   if (fs.existsSync(path.join(__dirname, "public", "index.html"))) return res.sendFile(path.join(__dirname, "public", "index.html"));
   if (fs.existsSync(path.join(__dirname, "index.html"))) return res.sendFile(path.join(__dirname, "index.html"));
-  res.send("Apetraho index.html eo akaikin'ny server.js na ao @ public/");
+  res.send("Apetraho index.html");
 });
 app.get("/api/status", (req, res) => res.json({ ok: true }));
 
@@ -79,211 +88,206 @@ app.post('/api/register', async (req, res) => {
   let { nom, pays, numero, password, confirmPassword, withdrawalPassword } = req.body;
   if (!nom || !numero || !password) return res.status(400).json({ message: "Fenoy Nom + Numero + Mot de passe" });
   if (password !== confirmPassword) return res.status(400).json({ message: "Mot de passe tsy mitovy" });
-  if (users.find(u => u.numero === numero)) return res.status(400).json({ message: "Numero efa misy" });
+  let ex = await pool.query(`SELECT id FROM users WHERE numero=$1`, [numero]);
+  if (ex.rows.length) return res.status(400).json({ message: "Numero efa misy" });
   let hash = await bcrypt.hash(password, 10);
   let whash = await bcrypt.hash(withdrawalPassword || password, 10);
-  let u = { id: nextId++, nom, pays, numero, password: hash, withdrawalPassword: whash, balance: 0, address: "" };
-  users.push(u);
-  notifyAdmin("inscription", "MPILALAO VAOVAO - " + nom + " - " + numero, { user: nom });
+  await pool.query(`INSERT INTO users(nom,pays,numero,password,withdrawal_password) VALUES($1,$2,$3,$4,$5)`, [nom, pays, numero, hash, whash]);
+  notifyAdmin("inscription", "MPILALAO VAOVAO - " + nom + " - " + numero);
   res.json({ message: "CREATION SUCCE" });
 });
 app.post('/api/login', async (req, res) => {
   let { numero, password } = req.body;
-  let u = users.find(x => x.numero === numero);
+  let r = await pool.query(`SELECT * FROM users WHERE numero=$1`, [numero]);
+  let u = r.rows[0];
   if (!u) return res.status(400).json({ message: "Numero tsy hita" });
   let ok = await bcrypt.compare(password, u.password);
   if (!ok) return res.status(400).json({ message: "Mot de passe diso" });
   let token = jwt.sign({ id: u.id, numero: u.numero }, JWT_SECRET);
-  res.json({ token, user: { id: u.id, nom: u.nom, numero: u.numero, balance: u.balance } });
+  res.json({ token, user: { id: u.id, nom: u.nom, numero: u.numero, balance: parseFloat(u.balance) } });
 });
-app.get('/api/me', auth, (req, res) => {
-  let u = getUser(req);
+app.get('/api/me', auth, async (req, res) => {
+  let u = await getUser(req);
   if (!u) return res.status(404).json({ message: "Tsy hita" });
-  res.json({ user: { id: u.id, nom: u.nom, numero: u.numero, balance: u.balance } });
+  res.json({ user: { id: u.id, nom: u.nom, numero: u.numero, balance: parseFloat(u.balance) } });
 });
 app.get('/api/wallets', (req, res) => res.json({ wallets }));
-app.get('/api/my-address', auth, (req, res) => {
-  let u = getUser(req);
-  if (!u) return res.status(404).json({ message: "Tsy hita" });
+app.get('/api/my-address', auth, async (req, res) => {
+  let u = await getUser(req);
   res.json({ address: u.address || "" });
 });
 
 // --- DEPOT / RETRAIT ---
-app.post('/api/deposit', auth, (req, res) => {
-  let u = getUser(req);
+app.post('/api/deposit', auth, async (req, res) => {
+  let u = await getUser(req);
   let { method, amount, reference } = req.body;
   if (!method || !amount || !reference) return res.status(400).json({ message: "Fenoy daholo" });
-  let d = { id: nextDepId++, userId: u.id, nom: u.nom, numero: u.numero, method, amount: parseFloat(amount), reference, status: "pending", date: new Date().toLocaleString('fr-MG') };
-  deposits.push(d);
-  notifyAdmin("deposit", `DEPOT - ${u.nom} - ${method} ${amount} - Ref ${reference}`, d);
+  await pool.query(`INSERT INTO deposits(user_id,nom,numero,method,amount,reference,status,date) VALUES($1,$2,$3,$4,$5,$6,'pending',$7)`, [u.id, u.nom, u.numero, method, parseFloat(amount), reference, now()]);
+  notifyAdmin("deposit", `DEPOT - ${u.nom} - ${method} ${amount} - Ref ${reference}`);
   res.json({ message: "Demande depot voaray - Admin manamarina" });
 });
 app.post('/api/withdraw', auth, async (req, res) => {
-  let u = getUser(req);
+  let u = await getUser(req);
   let { method, address, amount, withdrawalPassword } = req.body;
   if (!method || !amount || !withdrawalPassword) return res.status(400).json({ message: "Fenoy daholo" });
-  let ok = await bcrypt.compare(withdrawalPassword, u.withdrawalPassword);
+  let ok = await bcrypt.compare(withdrawalPassword, u.withdrawal_password);
   if (!ok) return res.status(400).json({ message: "Mot de passe retrait diso" });
   amount = parseFloat(amount);
-  if (u.balance < amount) return res.status(400).json({ message: "Solde tsy ampy" });
-  u.balance -= amount;
-  if (address) u.address = address;
-  let w = { id: nextWitId++, userId: u.id, nom: u.nom, numero: u.numero, method, address: address || "", amount, status: "pending", date: new Date().toLocaleString('fr-MG') };
-  withdrawals.push(w);
-  notifyAdmin("withdraw", `RETRAIT - ${u.nom} - ${method} ${amount} vers ${address}`, w);
+  if (parseFloat(u.balance) < amount) return res.status(400).json({ message: "Solde tsy ampy" });
+  await pool.query(`UPDATE users SET balance=balance-$1, address=$2 WHERE id=$3`, [amount, address || u.address, u.id]);
+  await pool.query(`INSERT INTO withdrawals(user_id,nom,numero,method,address,amount,status,date) VALUES($1,$2,$3,$4,$5,$6,'pending',$7)`, [u.id, u.nom, u.numero, method, address || "", amount, now()]);
+  notifyAdmin("withdraw", `RETRAIT - ${u.nom} - ${method} ${amount} vers ${address}`);
   res.json({ message: "Demande retrait voaray - Admin manamarina" });
 });
 app.post('/api/change-withdraw-password', auth, async (req, res) => {
-  let u = getUser(req);
+  let u = await getUser(req);
   let { newPassword } = req.body;
   if (!newPassword) return res.status(400).json({ message: "Fenoy mot de passe vaovao" });
-  u.withdrawalPassword = await bcrypt.hash(newPassword, 10);
+  let h = await bcrypt.hash(newPassword, 10);
+  await pool.query(`UPDATE users SET withdrawal_password=$1 WHERE id=$2`, [h, u.id]);
   res.json({ message: "Mot de passe retrait voaova" });
 });
 
 // --- TABLES / JEUX ---
-app.post('/api/create-table', auth, (req, res) => {
-  let u = getUser(req);
+app.post('/api/create-table', auth, async (req, res) => {
+  let u = await getUser(req);
   let { game, type, mise } = req.body;
   mise = parseFloat(mise || 0);
   let min = (game === "loto" ? 10 : 5);
   if (mise < min) return res.status(400).json({ message: "Minimum rappel: " + min + "$" });
-  if (u.balance < mise) return res.status(400).json({ message: "Solde tsy ampy" });
-  u.balance -= mise;
+  if (parseFloat(u.balance) < mise) return res.status(400).json({ message: "Solde tsy ampy" });
+  await pool.query(`UPDATE users SET balance=balance-$1 WHERE id=$2`, [mise, u.id]);
   let commission = +(mise * 0.10).toFixed(2);
   let fond = +(mise - commission).toFixed(2);
   let code = String(Math.floor(1000 + Math.random() * 9000));
-  let tb = { code, game, type, mise, commission, fond, players: [u.id], creator: u.id, creatorNom: u.nom, timer: "2min30s", date: new Date().toLocaleString('fr-MG') };
-  tables.push(tb);
-  res.json({ message: "Table cree", table: tb });
+  await pool.query(`INSERT INTO tables_tbl(code,game,type,mise,commission,fond,players,creator,creator_nom,timer,date) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,'2min30s',$10)`, [code, game, type, mise, commission, fond, JSON.stringify([u.id]), u.id, u.nom, now()]);
+  res.json({ message: "Table cree", table: { code, game, type, mise, commission, fond } });
 });
-app.get('/api/tables', auth, (req, res) => {
-  let list = tables.map(tb => ({ ...tb, players: tb.players.length }));
+app.get('/api/tables', auth, async (req, res) => {
+  let r = await pool.query(`SELECT * FROM tables_tbl ORDER BY code DESC`);
+  let list = r.rows.map(tb => ({ code: tb.code, game: tb.game, type: tb.type, mise: parseFloat(tb.mise), commission: parseFloat(tb.commission), fond: parseFloat(tb.fond), players: (tb.players || []).length, creatorNom: tb.creator_nom, timer: tb.timer }));
   res.json({ tables: list });
 });
-app.post('/api/join-table', auth, (req, res) => {
-  let u = getUser(req);
+app.post('/api/join-table', auth, async (req, res) => {
+  let u = await getUser(req);
   let { code } = req.body;
-  let tb = tables.find(t => t.code === String(code));
+  let r = await pool.query(`SELECT * FROM tables_tbl WHERE code=$1`, [String(code)]);
+  let tb = r.rows[0];
   if (!tb) return res.status(404).json({ message: "Code table tsy hita" });
-  if (!tb.players.includes(u.id)) tb.players.push(u.id);
-  res.json({ message: "Tafiditra @ table " + tb.code });
+  let players = tb.players || [];
+  if (!players.includes(u.id)) players.push(u.id);
+  await pool.query(`UPDATE tables_tbl SET players=$1 WHERE code=$2`, [JSON.stringify(players), String(code)]);
+  res.json({ message: "Tafiditra @ table " + code });
 });
-function playGame(req, res, gameName, bet) {
-  let u = getUser(req);
-  bet = bet || 0;
-  // Raha table no ampiasaina, bet = mise efa nalaina - raha tsy misy table, alaina @ solde
-  // Eto: jeu simple - 40% chance mandresy, gain = bet * 1.8
-  let win = Math.random() < 0.4;
-  let net = 0, result = "Perdu";
-  if (win) { let gain = +(bet * 1.8).toFixed(2); net = +(gain - bet).toFixed(2); u.balance += gain; result = "Gagne"; }
-  else { net = -bet; result = "Perdu"; }
-  games.push({ userId: u.id, game: gameName, bet, result, net, date: new Date().toLocaleString('fr-MG') });
-  res.json({ message: win ? `🏆 GAGNE - Net +${net}$` : `Perdu - ${net}$`, newBalance: u.balance });
+async function saveGame(userId, game, bet, result, net) {
+  await pool.query(`INSERT INTO games(user_id,game,bet,result,net,date) VALUES($1,$2,$3,$4,$5,$6)`, [userId, game, bet, result, net, now()]);
 }
-app.post('/api/play-loto', auth, (req, res) => {
-  let u = getUser(req);
+app.post('/api/play-loto', auth, async (req, res) => {
+  let u = await getUser(req);
   let { ticket1, ticket2, code } = req.body;
   if (!ticket1 || !ticket2 || ticket1.length !== 5 || ticket2.length !== 5) return res.status(400).json({ message: "Choisissez 5 x2" });
-  let tb = tables.find(t => t.code === String(code));
-  let bet = tb ? tb.mise : 10;
-  if (!tb && u.balance < bet) return res.status(400).json({ message: "Solde tsy ampy" });
-  if (!tb) u.balance -= bet;
-  // Tirage 1-30
+  let tbR = await pool.query(`SELECT * FROM tables_tbl WHERE code=$1`, [String(code || "")]);
+  let tb = tbR.rows[0];
+  let bet = tb ? parseFloat(tb.mise) : 10;
+  if (!tb) {
+    if (parseFloat(u.balance) < bet) return res.status(400).json({ message: "Solde tsy ampy" });
+    await pool.query(`UPDATE users SET balance=balance-$1 WHERE id=$2`, [bet, u.id]);
+  }
   let tirage = [];
   while (tirage.length < 5) { let n = Math.floor(1 + Math.random() * 30); if (!tirage.includes(n)) tirage.push(n); }
   let t1 = ticket1.filter(n => tirage.slice(0, 3).includes(n)).length;
   let t2 = ticket2.filter(n => tirage.slice(0, 3).includes(n)).length;
   let full1 = ticket1.every(n => tirage.includes(n));
   let full2 = ticket2.every(n => tirage.includes(n));
-  let fond = tb ? tb.fond : bet * 0.9;
+  let fond = tb ? parseFloat(tb.fond) : bet * 0.9;
   let gain = 0, result = "Perdu";
   if (full1 || full2) { gain = +(fond * 0.70).toFixed(2); result = "QUINTE"; }
   else if (t1 === 3 || t2 === 3) { gain = +(fond * 0.30).toFixed(2); result = "TIERCE"; }
   let net = gain ? +(gain - (tb ? 0 : bet)).toFixed(2) : -(tb ? 0 : bet);
-  if (gain) u.balance += gain;
-  games.push({ userId: u.id, game: "loto", bet, result: result + " - Tirage " + tirage.join("-"), net, date: new Date().toLocaleString('fr-MG') });
-  res.json({ message: gain ? `🏆 ${result} - Tirage ${tirage.join("-")} - Gain ${gain}$` : `Perdu - Tirage ${tirage.join("-")}`, newBalance: u.balance });
+  if (gain) await pool.query(`UPDATE users SET balance=balance+$1 WHERE id=$2`, [gain, u.id]);
+  await saveGame(u.id, "loto", bet, result + " - Tirage " + tirage.join("-"), net);
+  let nb = await getUser(req);
+  res.json({ message: gain ? `🏆 ${result} - Tirage ${tirage.join("-")} - Gain ${gain}$` : `Perdu - Tirage ${tirage.join("-")}`, newBalance: parseFloat(nb.balance) });
 });
-app.post('/api/play-card', auth, (req, res) => {
-  let u = getUser(req);
+async function playSimple(req, res, gameName) {
+  let u = await getUser(req);
   let { code } = req.body;
-  let tb = tables.find(t => t.code === String(code));
-  let bet = tb ? tb.mise : 5;
-  if (!tb && u.balance < bet) return res.status(400).json({ message: "Solde tsy ampy" });
-  if (!tb) u.balance -= bet;
-  playGame(req, res, "card", tb ? 0 : bet);
-});
-app.post('/api/play-rami', auth, (req, res) => {
-  let u = getUser(req);
-  let { type, code } = req.body;
-  let tb = tables.find(t => t.code === String(code));
-  let bet = tb ? tb.mise : 5;
-  if (!tb && u.balance < bet) return res.status(400).json({ message: "Solde tsy ampy" });
-  if (!tb) u.balance -= bet;
-  playGame(req, res, "rami-" + (type || "bordel"), tb ? 0 : bet);
-});
-app.post('/api/play-ludo', auth, (req, res) => {
-  let u = getUser(req);
-  let { code } = req.body;
-  let tb = tables.find(t => t.code === String(code));
-  let bet = tb ? tb.mise : 5;
-  if (!tb && u.balance < bet) return res.status(400).json({ message: "Solde tsy ampy" });
-  if (!tb) u.balance -= bet;
-  playGame(req, res, "ludo", tb ? 0 : bet);
-});
+  let tbR = await pool.query(`SELECT * FROM tables_tbl WHERE code=$1`, [String(code || "")]);
+  let tb = tbR.rows[0];
+  let bet = tb ? parseFloat(tb.mise) : 5;
+  if (!tb) {
+    if (parseFloat(u.balance) < bet) return res.status(400).json({ message: "Solde tsy ampy" });
+    await pool.query(`UPDATE users SET balance=balance-$1 WHERE id=$2`, [bet, u.id]);
+  }
+  let win = Math.random() < 0.4;
+  let net = 0, result = "Perdu";
+  if (win) { let gain = +(bet * 1.8).toFixed(2); net = +(gain - (tb ? 0 : bet)).toFixed(2); if (tb) await pool.query(`UPDATE users SET balance=balance+$1 WHERE id=$2`, [gain, u.id]); else await pool.query(`UPDATE users SET balance=balance+$1 WHERE id=$2`, [gain, u.id]); result = "Gagne"; }
+  else { net = -(tb ? 0 : bet); }
+  await saveGame(u.id, gameName, bet, result, net);
+  let nb = await getUser(req);
+  res.json({ message: win ? `🏆 GAGNE - Net +${net}$` : `Perdu - ${net}$`, newBalance: parseFloat(nb.balance) });
+}
+app.post('/api/play-card', auth, (req, res) => playSimple(req, res, "card"));
+app.post('/api/play-rami', auth, (req, res) => playSimple(req, res, "rami"));
+app.post('/api/play-ludo', auth, (req, res) => playSimple(req, res, "ludo"));
 
 // --- HISTO / SUPPORT ---
-app.get('/api/my-history', auth, (req, res) => {
-  let u = getUser(req);
-  res.json({
-    deposits: deposits.filter(d => d.userId === u.id),
-    withdrawals: withdrawals.filter(w => w.userId === u.id),
-    games: games.filter(g => g.userId === u.id)
-  });
+app.get('/api/my-history', auth, async (req, res) => {
+  let u = await getUser(req);
+  let d = await pool.query(`SELECT * FROM deposits WHERE user_id=$1 ORDER BY id DESC`, [u.id]);
+  let w = await pool.query(`SELECT * FROM withdrawals WHERE user_id=$1 ORDER BY id DESC`, [u.id]);
+  let g = await pool.query(`SELECT * FROM games WHERE user_id=$1 ORDER BY id DESC`, [u.id]);
+  res.json({ deposits: d.rows, withdrawals: w.rows, games: g.rows });
 });
-app.post('/api/support', auth, (req, res) => {
-  let u = getUser(req);
+app.post('/api/support', auth, async (req, res) => {
+  let u = await getUser(req);
   let { message } = req.body;
   if (!message) return res.status(400).json({ message: "Soraty hafatra" });
-  supports.push({ id: Date.now(), userId: u.id, nom: u.nom, numero: u.numero, message, date: new Date().toLocaleString('fr-MG') });
-  notifyAdmin("support", `SUPPORT - ${u.nom}: ${message}`, { user: u.nom });
+  await pool.query(`INSERT INTO supports(user_id,nom,numero,message,date) VALUES($1,$2,$3,$4,$5)`, [u.id, u.nom, u.numero, message, now()]);
+  notifyAdmin("support", `SUPPORT - ${u.nom}: ${message}`);
   res.json({ message: "Hafatra voaray - Admin hamaly" });
 });
 
 // --- ADMIN ---
-app.get('/api/admin/members', isAdmin, (req, res) => {
-  res.json({ members: users.map(u => ({ id: u.id, nom: u.nom, numero: u.numero, balance: u.balance, pays: u.pays })) });
+app.get('/api/admin/members', isAdmin, async (req, res) => {
+  let r = await pool.query(`SELECT id,nom,numero,balance,pays FROM users ORDER BY id DESC`);
+  res.json({ members: r.rows });
 });
-app.get('/api/admin/deposits', isAdmin, (req, res) => res.json({ deposits }));
-app.get('/api/admin/withdrawals', isAdmin, (req, res) => res.json({ withdrawals }));
-app.get('/api/admin/support', isAdmin, (req, res) => res.json({ support: supports }));
-app.post('/api/admin/validate', isAdmin, (req, res) => {
+app.get('/api/admin/deposits', isAdmin, async (req, res) => {
+  let r = await pool.query(`SELECT * FROM deposits ORDER BY id DESC`);
+  res.json({ deposits: r.rows });
+});
+app.get('/api/admin/withdrawals', isAdmin, async (req, res) => {
+  let r = await pool.query(`SELECT * FROM withdrawals ORDER BY id DESC`);
+  res.json({ withdrawals: r.rows });
+});
+app.get('/api/admin/support', isAdmin, async (req, res) => {
+  let r = await pool.query(`SELECT * FROM supports ORDER BY id DESC`);
+  res.json({ support: r.rows });
+});
+app.post('/api/admin/validate', isAdmin, async (req, res) => {
   let { type, id, action, convertedUSD } = req.body;
   if (type === "deposit") {
-    let d = deposits.find(x => x.id === Number(id));
+    let r = await pool.query(`SELECT * FROM deposits WHERE id=$1`, [Number(id)]);
+    let d = r.rows[0];
     if (!d) return res.status(404).json({ message: "Depot tsy hita" });
     if (action === "approve") {
-      let u = users.find(x => x.id === d.userId);
-      let amt = parseFloat(convertedUSD) || d.amount;
-      if (u) u.balance += amt;
-      d.status = "approved"; d.amount = amt;
-    } else { d.status = "rejected"; }
-    return res.json({ message: "Depot " + d.status });
+      let amt = parseFloat(convertedUSD) || parseFloat(d.amount);
+      await pool.query(`UPDATE users SET balance=balance+$1 WHERE id=$2`, [amt, d.user_id]);
+      await pool.query(`UPDATE deposits SET status='approved', amount=$1 WHERE id=$2`, [amt, d.id]);
+    } else { await pool.query(`UPDATE deposits SET status='rejected' WHERE id=$1`, [d.id]); }
+    return res.json({ message: "Depot " + (action === "approve" ? "approved" : "rejected") });
   }
   if (type === "withdraw") {
-    let w = withdrawals.find(x => x.id === Number(id));
+    let r = await pool.query(`SELECT * FROM withdrawals WHERE id=$1`, [Number(id)]);
+    let w = r.rows[0];
     if (!w) return res.status(404).json({ message: "Retrait tsy hita" });
-    if (action === "approve") { w.status = "approved"; }
-    else {
-      w.status = "rejected";
-      let u = users.find(x => x.id === w.userId);
-      if (u) u.balance += w.amount; // remboursement
-    }
-    return res.json({ message: "Retrait " + w.status });
+    if (action === "approve") { await pool.query(`UPDATE withdrawals SET status='approved' WHERE id=$1`, [w.id]); }
+    else { await pool.query(`UPDATE withdrawals SET status='rejected' WHERE id=$1`, [w.id]); await pool.query(`UPDATE users SET balance=balance+$1 WHERE id=$2`, [parseFloat(w.amount), w.user_id]); }
+    return res.json({ message: "Retrait " + (action === "approve" ? "approved" : "rejected") });
   }
   return res.status(400).json({ message: "Type diso" });
 });
 
 const PORT = process.env.PORT || 3000;
-http.listen(PORT, () => console.log("MADA MLALAO - http://localhost:" + PORT));
+http.listen(PORT, () => console.log("MADA MLALAO POSTGRES - http://localhost:" + PORT));
