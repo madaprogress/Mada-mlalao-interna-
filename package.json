@@ -1,13 +1,12 @@
 {
-  "name": "mada-mlalao-interna",
-  "version": "1.0.0",
+  "name": "mada",
   "main": "server.js",
   "scripts": { "start": "node server.js" },
   "dependencies": {
     "express": "^4.18.2",
-    "jsonwebtoken": "^9.0.2",
+    "jsonwebtoken": "^9.0.0",
     "bcryptjs": "^2.4.3",
-    "socket.io": "^4.7.5",
-    "pg": "^8.11.3"
+    "pg": "^8.11.0",
+    "socket.io": "^4.7.0"
   }
 }
