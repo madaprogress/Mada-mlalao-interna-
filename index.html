@@ -1,121 +1,109 @@
 <!DOCTYPE html><html lang="mg"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MADA MLALAO</title>
 <style>
-*box-sizing:border-box}body{margin:0;background:#0f0f0f;color:#fff;font-family:Arial,sans-serif;padding-bottom:90px}
+*{box-sizing:border-box}body{margin:0;background:#0f0f0f;color:#fff;font-family:Arial,sans-serif;padding-bottom:90px}
 header{background:#1a1a1a;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
 .logo{font-weight:900;font-size:20px;color:#ff6b00}.bal{background:#ff6b00;color:#fff;padding:8px 14px;border-radius:20px;font-weight:900}
 .card{background:#1e1e1e;border:1px solid #333;border-radius:14px;padding:14px;margin:12px}input,select{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:1px solid #444;background:#111;color:#fff;font-size:15px}
 button{width:100%;padding:13px;border:0;border-radius:10px;font-weight:900;font-size:15px;cursor:pointer;margin:6px 0;background:#ff6b00;color:#fff}.blue{background:#2563eb}.green{background:#16a34a}.red{background:#dc2626}.gray{background:#444}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.g{background:#2a2a2a;border-radius:14px;padding:16px;text-align:center;cursor:pointer;border:2px solid #333}.g b{font-size:16px}.small{font-size:12px;color:#aaa;line-height:1.5}.hidden{display:none}.nav{position:fixed;bottom:0;left:0;right:0;background:#1a1a1a;display:flex;border-top:1px solid #333;z-index:10}.nav button{background:none;color:#aaa;font-size:12px;padding:10px 0;margin:0}.nav button.on{color:#ff6b00}.row{display:flex;gap:8px}.row button{flex:1}
+.lotoNum{width:100%;aspect-ratio:1;border-radius:50%;border:2px solid #444;background:#111;color:#fff;font-size:16px;font-weight:700;cursor:pointer}.lotoNum.on{background:#ff6b00;border-color:#ff6b00}
 </style></head><body>
 <header><div class="logo">🎲 MADA MLALAO</div><div class="bal"><span id="balanceText">0</span> USD</div></header>
 
 <!-- AUTH -->
-<div id="pageAuth">
-<div class="card">
+<div id="pageAuth"><div class="card">
 <div class="row"><button id="btnShowLogin" class="blue" onclick="showAuth('login')">HIDITRA</button><button id="btnShowReg" class="gray" onclick="showAuth('reg')">FAMORONANA</button></div>
-<div id="boxLogin">
-<h2>HIDITRA</h2><input id="logNumero" placeholder="Numero - Ex: 034 12 345 67"><input id="logPass" type="password" placeholder="Mot de passe"><button onclick="doLogin()">HIDITRA</button>
-</div>
-<div id="boxReg" class="hidden">
-<h2>FAMORONANA KAONTY</h2>
-<input id="regNom" placeholder="Anarana feno"><select id="regPays"><option value="261">🇲🇬 Madagascar +261</option><option value="33">🇫🇷 France +33</option><option value="596">🇲🇶 Martinique +596</option></select>
-<input id="regNumero" placeholder="Numero - Ex: 034 12 345 67">
-<input id="regPass" type="password" placeholder="Mot de passe"><input id="regPass2" type="password" placeholder="Avereno Mot de passe">
-<input id="regWithPass" type="password" placeholder="Teny miafina fanalana vola">
-<!-- TSY MISY ADRESS ETO - PLATEFORME NO MAMORONA -->
-<p class="small">⚠️ Rehefa voasokatra ny compte - Plateforme no mamorona ho azy ny ID-nao + Adress Wallet Unique-nao - Ho hitanao @ MON COMPTE</p>
-<button class="green" onclick="doRegister()">MAMORONA KAONTY</button>
-</div><p id="authMsg" class="small"></p></div>
-</div>
+<div id="boxLogin"><h2>HIDITRA</h2><input id="logNumero" placeholder="Numero - Ex: 034 12 345 67"><input id="logPass" type="password" placeholder="Mot de passe"><button onclick="doLogin()">HIDITRA</button></div>
+<div id="boxReg" class="hidden"><h2>FAMORONANA KAONTY</h2><input id="regNom" placeholder="Anarana feno"><select id="regPays"><option value="261">🇲🇬 Madagascar +261</option><option value="33">🇫🇷 France +33</option><option value="596">🇲🇶 Martinique +596</option></select><input id="regNumero" placeholder="Numero - Ex: 034 12 345 67"><input id="regPass" type="password" placeholder="Mot de passe"><input id="regPass2" type="password" placeholder="Avereno Mot de passe"><input id="regWithPass" type="password" placeholder="Teny miafina fanalana vola"><p class="small">⚠️ Rehefa voasokatra ny compte - Plateforme no mamorona ho azy ny ID-nao + Adress Wallet Unique-nao - Ho hitanao @ MON COMPTE</p><button class="green" onclick="doRegister()">MAMORONA KAONTY</button></div><p id="authMsg" class="small"></p></div></div>
 
 <!-- HOME -->
-<div id="pageHome" class="hidden">
-<div class="card"><h2>👋 Tongasoa <span id="homeName">-</span></h2><p>Vola: <b id="homeBal">0</b> USD</p>
-<div class="grid">
-<div class="g" onclick="go('depot')">💰<br><b>DEPOT</b><br><span class="small">Ampidiro vola</span></div>
-<div class="g" onclick="go('retrait')">🏧<br><b>RETRAIT</b><br><span class="small">Alao vola</span></div>
-<div class="g" onclick="go('compte')">👤<br><b>MON COMPTE</b><br><span class="small">ID + Wallet</span></div>
-<div class="g" onclick="go('jeux')">🎮<br><b>LALAO</b><br><span class="small">LOTO - CARD - RAMI - LUDO</span></div>
-</div></div>
-<div class="card"><h3>🎲 LALAO - CREER TABLE</h3>
-<select id="gameSel"><option value="LOTO">LOTO</option><option value="CARD">CARD</option><option value="RAMI">RAMI</option><option value="LUDO">LUDO</option></select>
-<input id="entryAmt" type="number" value="5" placeholder="Vola hiditra - USD"><input id="maxP" type="number" value="4" placeholder="Isan'ny mpilalao max">
-<button onclick="createTable()">+ CREER TABLE</button><div id="tablesList"></div></div>
-</div>
+<div id="pageHome" class="hidden"><div class="card"><h2>👋 Tongasoa <span id="homeName">-</span></h2><p>Vola: <b id="homeBal">0</b> USD</p>
+<div class="grid"><div class="g" onclick="go('depot')">💰<br><b>DEPOT</b><br><span class="small">Ampidiro vola</span></div><div class="g" onclick="go('retrait')">🏧<br><b>RETRAIT</b><br><span class="small">Alao vola</span></div><div class="g" onclick="go('compte')">👤<br><b>MON COMPTE</b><br><span class="small">ID + Wallet</span></div><div class="g" onclick="go('jeux')">🎮<br><b>LALAO</b><br><span class="small">LOTO - CARD - RAMI - LUDO</span></div></div></div>
+<div class="card"><h3>🎲 LALAO - CREER TABLE</h3><select id="gameSel"><option value="LOTO">LOTO</option><option value="CARD">CARD</option><option value="RAMI">RAMI</option><option value="LUDO">LUDO</option></select><input id="entryAmt" type="number" value="5" placeholder="Vola hiditra - USD"><input id="maxP" type="number" value="4" placeholder="Isan'ny mpilalao max"><button onclick="createTable()">+ CREER TABLE</button><div id="tablesList"></div></div></div>
 
-<!-- DEPOT -->
-<div id="pageDepot" class="hidden"><div class="card"><h2>💰 DEPOT</h2><p class="small">Alefaso @ Numero Admin - Dia soraty eto ny Vola + Preuve</p>
-<input id="depAmt" type="number" placeholder="Vola USD"><input id="depProof" placeholder="Preuve - Numero nandefasana / Capture"><button class="green" onclick="doDeposit()">ALEFA DEPOT</button><p id="depMsg" class="small"></p></div></div>
+<!-- DEPOT VAOVAO -->
+<div id="pageDepot" class="hidden"><div class="card"><h2>💰 DEPOT</h2>
+<div class="row"><button id="btnDepMobile" onclick="setDepKind('mobile')">📱 VIREMENT</button><button id="btnDepCrypto" class="gray" onclick="setDepKind('crypto')">🪙 CRYPTO - COPY</button></div>
+<div id="depNetBtns" class="row"></div>
+<p class="small" style="color:#ff6b00;font-weight:900">Minimum 4 500 Ar = 1$ - LOTO : 0,5$ x 2 Ticket = 1$ - Raha latsaka - Tsy ampy</p>
+<input id="depAmt" type="number" min="4500" placeholder="Entre 4 500 et 50 000 Ar - Minimum 1$"><p class="small" id="depUsdHint">Vola USD : - $</p>
+<div id="depBenefBox" class="hidden" style="background:#241a0f;border:2px solid #16a34a;border-radius:12px;padding:12px"><b style="color:#4ade80">✅ <span id="depBenefTitle">Bénéficiaire</span></b><div id="depBenefName" style="font-size:22px;font-weight:900">-</div><div id="depBenefNum" class="small"></div><div style="color:#4ade80;font-weight:900">Montant exact : <span id="depExact">— Ar</span></div></div>
+<div id="depCodeBox" class="hidden" style="background:#111;border:1px solid #444;border-radius:12px;padding:12px;text-align:center"><div class="small" style="text-align:left">⌨️ Code à composer</div><div id="depCode" style="font-size:22px;font-weight:900;color:#ff6b00;margin:10px 0">#111*1*4*1**#</div><a id="depCodeLink" href="#" style="display:block;background:#16a34a;color:#fff;text-decoration:none;padding:13px;border-radius:10px;font-weight:900">📞 Composer ce code</a><p class="small">Tsindrio - Mivoha Clavier - Soraty Vola - Alefa</p></div>
+<div id="depCryptoList" class="hidden"></div>
+<p style="font-weight:900;margin-top:12px">Numéro ayant envoyé l'argent</p><input id="depSender" placeholder="034... - Numero nandefasanao">
+<p style="font-weight:900">Référence de transaction</p><input id="depProof" placeholder="Recopie la référence du SMS"><button class="green" onclick="doDepositPro()">➤ Envoyer pour vérification</button><p id="depMsg" class="small"></p></div></div>
 
 <!-- RETRAIT -->
-<div id="pageRetrait" class="hidden"><div class="card"><h2>🏧 RETRAIT - AUTOMATIQUE</h2>
-<p class="small">Adress Wallet Unique-nao - Halefa any ny USD : <b id="witMyAddress" style="color:#ff6b00;word-break:break-all">-</b></p>
-<p class="small">Soraty fotsiny ny Vola - Milatsaka any @ Admin - Admin mandefa USD @ Wallet-nao</p>
-<input id="witAmount" type="number" placeholder="Vola USD tianao avoaka"><input id="witPass" type="password" placeholder="Teny miafina fanalana vola"><button class="blue" onclick="doWithdraw()">FANALANA - AUTOMATIQUE</button><p id="witMsg" class="small"></p></div></div>
+<div id="pageRetrait" class="hidden"><div class="card"><h2>🏧 RETRAIT - AUTOMATIQUE</h2><p class="small">Adress Wallet Unique-nao - Halefa any ny USD : <b id="witMyAddress" style="color:#ff6b00;word-break:break-all">-</b></p><p class="small">Soraty fotsiny ny Vola - Milatsaka any @ Admin - Admin mandefa USD @ Wallet-nao</p><input id="witAmount" type="number" placeholder="Vola USD tianao avoaka"><input id="witPass" type="password" placeholder="Teny miafina fanalana vola"><button class="blue" onclick="doWithdraw()">FANALANA - AUTOMATIQUE</button><p id="witMsg" class="small"></p></div></div>
 
 <!-- COMPTE -->
-<div id="pageCompte" class="hidden"><div class="card"><h2>👤 NY KAONTIKO</h2>
-<p><b>Vola :</b> <b id="cBal">0</b> USD<br>Anarana: <b id="cName">-</b><br>Laharana: <b id="cPhone">-</b></p>
-<div style="border:3px solid #ff6b00;background:#241a0f;border-radius:14px;padding:14px;margin:12px 0">
-<b>ID-nao :</b><div id="myMemberId" style="font-size:20px;font-weight:900">3834...</div><p class="small">ID Unique - Arakaraka ny numero ampiasainao</p>
-<b>Adress Wallet Unique-nao :</b>
-<div style="display:flex;gap:8px;align-items:center;margin-top:6px"><div id="myWallet" style="flex:1;font-size:14px;font-weight:900;word-break:break-all;background:#000;padding:10px;border-radius:10px;border:1px solid #ff6b00">0x...</div><button style="width:70px;background:#16a34a;margin:0" onclick="copyTxt(document.getElementById('myWallet').textContent)">📋 COPY</button></div>
-<p class="small">Ity adress ity no andefasan'ny Admin ny USD rehefa Retrait - Aza zaraina @ olon-kafa - Samy manana ny azy</p>
-</div>
-<button class="red" onclick="logout()">MIVOAKA</button></div></div>
+<div id="pageCompte" class="hidden"><div class="card"><h2>👤 NY KAONTIKO</h2><p><b>Vola :</b> <b id="cBal">0</b> USD<br>Anarana: <b id="cName">-</b><br>Laharana: <b id="cPhone">-</b></p><div style="border:3px solid #ff6b00;background:#241a0f;border-radius:14px;padding:14px;margin:12px 0"><b>ID-nao :</b><div id="myMemberId" style="font-size:20px;font-weight:900">3834...</div><p class="small">ID Unique - Arakaraka ny numero ampiasainao</p><b>Adress Wallet Unique-nao :</b><div style="display:flex;gap:8px;align-items:center;margin-top:6px"><div id="myWallet" style="flex:1;font-size:14px;font-weight:900;word-break:break-all;background:#000;padding:10px;border-radius:10px;border:1px solid #ff6b00">0x...</div><button style="width:70px;background:#16a34a;margin:0" onclick="copyTxt(document.getElementById('myWallet').textContent)">📋 COPY</button></div><p class="small">Ity adress ity no andefasan'ny Admin ny USD rehefa Retrait - Aza zaraina @ olon-kafa - Samy manana ny azy</p></div><button class="red" onclick="logout()">MIVOAKA</button></div></div>
 
 <!-- JEUX -->
-<div id="pageJeux" class="hidden"><div class="card"><h2>🎮 LALAO</h2><div class="grid">
-<div class="g" onclick="playGame('loto')">🎱<br><b>LOTO</b></div><div class="g" onclick="playGame('card')">🃏<br><b>CARD</b></div>
-<div class="g" onclick="playGame('rami')">🀄<br><b>RAMI</b></div><div class="g" onclick="playGame('ludo')">🎲<br><b>LUDO</b></div>
-</div><p id="gameMsg" class="small"></p></div></div>
+<div id="pageJeux" class="hidden"><div class="card"><h2>🎮 LALAO</h2><div class="grid"><div class="g" onclick="openLoto()">🎱<br><b>LOTO</b><br><span class="small">5/35 - Hita daholo</span></div><div class="g" onclick="openLobby('CARD')">🃏<br><b>CARD - TRI</b><br><span class="small">Créer / Rejoindre</span></div><div class="g" onclick="openLobby('RAMI')">🀄<br><b>RAMI</b><br><span class="small">Créer / Rejoindre</span></div><div class="g" onclick="openLobby('LUDO')">🎲<br><b>LUDO</b><br><span class="small">Créer / Rejoindre</span></div></div><p id="gameMsg" class="small"></p></div></div>
+
+<!-- LOTO VAOVAO -->
+<div id="pageLoto" class="hidden"><div class="card"><h2>🎱 LOTO - COMBI CAGNOTTE 2548</h2><p class="small">Prochain tirage : <b id="lotoTimer">21 : 37 : 30</b> - Solde-nao : <b id="lotoBalance">0 USD</b> - Afaka mijery - Vao milalao no mila Solde</p><div class="row"><button onclick="flashLoto()">⚡ Flash</button><button class="gray" onclick="clearLoto()">🧹 Effacer</button></div><div style="background:#dc2626;padding:12px;border-radius:12px 12px 0 0"><b>Grille 1</b><div id="lotoPicked" style="text-align:center;margin:8px 0">- - - - -</div></div><div id="lotoNumbers" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;background:#2a2a2a;padding:14px;border-radius:0 0 12px 12px"></div><p style="font-weight:900">Mise : 0,5$ x 2 Ticket = 1$ = 4 500 Ar</p><button class="green" onclick="playLoto()">🎲 VALIDER - MILALAO</button><p id="lotoMsg" class="small"></p><button class="gray" onclick="go('jeux')">← Retour</button></div></div>
+
+<!-- LOBBY VAOVAO -->
+<div id="pageLobby" class="hidden"><div class="card"><h2 style="text-align:center" id="lobbyTitle">RAMI EN LIGNE</h2>
+<button onclick="quickPlay()">⚡ Partie rapide - Trouve adversaire</button><button class="gray" onclick="resumeGame()">▶️ Partie en cours - Reprendre</button><p class="small" style="text-align:center">SOLO</p><button class="blue" onclick="playBot()">🤖 vs Bot - 1 vs 1 - Gratuit</button><p class="small" style="text-align:center">ENTRE AMIS</p><button onclick="openCreateParty()">🏠 Créer une partie - Code + Invite ami</button><button class="gray" onclick="openJoinParty()">🔑 Rejoindre une partie - Entre le code</button><button class="gray" onclick="go('jeux')">← Retour</button></div></div>
+<div id="modalCreate" class="hidden"><div class="card"><h2>Partie privée</h2><label>MISE</label><input id="partyMise" type="number" value="0"><p class="small">0 = Gratuit - Multiple de 100 - Max 10 000 Ar</p><label>MODE</label><div class="row"><button id="modeBordel" onclick="setMode('Bordel')">Jeu Bordel</button><button id="modeNaturel" class="gray" onclick="setMode('Naturel')">Jeu Naturel</button></div><div class="row"><button class="gray" onclick="closeModals()">Annuler</button><button onclick="createParty()">Créer</button></div></div></div>
+<div id="modalJoin" class="hidden"><div class="card"><h2>Rejoindre une partie</h2><input id="joinCode" placeholder="Ex : 672LS4S" style="text-align:center;font-size:24px;letter-spacing:4px;font-weight:900;text-transform:uppercase"><div class="row"><button class="gray" onclick="closeModals()">Annuler</button><button onclick="joinParty()">Rejoindre</button></div></div></div>
+<div id="pageSalon" class="hidden"><div class="card"><div style="background:#16a34a;padding:10px;border-radius:10px">🟡 La partie démarre automatiquement dès que les deux joueurs sont présents.</div><p class="small">CODE DU SALON - <span id="salonTimer">04:55</span></p><div id="salonCode" style="font-size:32px;font-weight:900;color:#ff6b00">------</div><div id="salonInfo" class="small"></div><div id="salonDesc" class="small"></div><button onclick="inviteFriend()">➤ Envoyer à un ami</button><button class="blue" onclick="inviteFriend()">👥 Envoyer au groupe</button><h3>Autour de la table - 1/2 joueurs</h3><div class="row"><div class="card" style="flex:1;text-align:center"><div style="font-size:28px">👤</div><b id="salonMeName">Moi</b><div class="small">toi - ● PRÉSENT</div></div><div class="card" style="flex:1;text-align:center;border:2px dashed #ff6b00"><div style="font-size:28px">+</div><span>Siège libre</span></div></div><p class="small" id="salonWait">En attente de votre ami...</p><button class="red" onclick="quitSalon()">Quitter</button></div></div>
+<div id="pageGame" class="hidden"><div class="card" style="text-align:center"><h2 id="gameTitle">LALAO</h2><p>2 joueurs présents - Lalao manomboka !</p><button onclick="go('jeux')">← Retour</button></div></div>
 
 <!-- ADMIN -->
 <div id="pageAdmin" class="hidden"><div class="card"><h2>🛡️ ADMIN</h2><button onclick="loadAdmin()">🔄 REFRESH ADMIN</button><div id="adminBox"></div></div></div>
-
-<div class="nav hidden" id="bottomNav">
-<button onclick="go('home')" id="navHome">🏠 Accueil</button><button onclick="go('depot')">💰 Depot</button><button onclick="go('retrait')">🏧 Retrait</button><button onclick="go('compte')">👤 Compte</button><button onclick="go('jeux')">🎮 Lalao</button><button onclick="go('admin')">🛡️ Admin</button>
-</div>
+<div class="nav hidden" id="bottomNav"><button onclick="go('home')">🏠 Accueil</button><button onclick="go('depot')">💰 Depot</button><button onclick="go('retrait')">🏧 Retrait</button><button onclick="go('compte')">👤 Compte</button><button onclick="go('jeux')">🎮 Lalao</button><button onclick="go('admin')">🛡️ Admin</button></div>
 
 <script>
-let member=null;
-function showAuth(t){ document.getElementById('boxLogin').classList.toggle('hidden',t!=='login'); document.getElementById('boxReg').classList.toggle('hidden',t!=='reg'); }
-function copyTxt(t){ navigator.clipboard.writeText(t); alert('Copie : '+t); }
-async function api(p,m,d){ let tok=sessionStorage.getItem('mada_token')||''; let o={method:m||'GET',headers:{'Content-Type':'application/json'}}; if(tok) o.headers.Authorization='Bearer '+tok; if(d) o.body=JSON.stringify(d); let r=await fetch('/api'+p,o); let t=await r.text(); let j={}; try{j=JSON.parse(t)}catch(e){j={message:t}} if(!r.ok) throw new Error(j.message||'Erreur'); return j; }
-async function doRegister(){
-  try{
-    let nom=document.getElementById('regNom').value, pays=document.getElementById('regPays').value, numero=document.getElementById('regNumero').value;
-    let pw=document.getElementById('regPass').value, cf=document.getElementById('regPass2').value, wp=document.getElementById('regWithPass').value;
-    let r=await api('/register','POST',{nom,pays,numero,password:pw,confirmPassword:cf,withdrawalPassword:wp});
-    document.getElementById('authMsg').textContent=r.message; alert(r.message); showAuth('login');
-  }catch(e){ document.getElementById('authMsg').textContent=e.message; alert(e.message); }
-}
-async function doLogin(){
-  try{ let numero=document.getElementById('logNumero').value, password=document.getElementById('logPass').value;
-    let r=await api('/login','POST',{numero,password}); sessionStorage.setItem('mada_token',r.token); member=r.user;
-    document.getElementById('pageAuth').classList.add('hidden'); document.getElementById('pageHome').classList.remove('hidden'); document.getElementById('bottomNav').classList.remove('hidden');
-    refreshBalance(); loadTables();
-  }catch(e){ alert(e.message); }
-}
-function logout(){ sessionStorage.removeItem('mada_token'); location.reload(); }
-function go(p){
-  ['pageHome','pageDepot','pageRetrait','pageCompte','pageJeux','pageAdmin'].forEach(id=>document.getElementById(id).classList.add('hidden'));
-  let map={home:'pageHome',depot:'pageDepot',retrait:'pageRetrait',compte:'pageCompte',jeux:'pageJeux',admin:'pageAdmin'};
-  document.getElementById(map[p]).classList.remove('hidden'); if(p==='admin') loadAdmin(); if(p==='home'||p==='compte') refreshBalance(); if(p==='home') loadTables();
-}
-async function refreshBalance(){
-  try{ let r=await api('/me'); member=r.user;
-    document.getElementById('balanceText').textContent=member.balance; document.getElementById('homeBal').textContent=member.balance; document.getElementById('cBal').textContent=member.balance;
-    document.getElementById('homeName').textContent=member.nom; document.getElementById('cName').textContent=member.nom; document.getElementById('cPhone').textContent=member.numero;
-    document.getElementById('myMemberId').textContent=member.memberId||'-'; document.getElementById('myWallet').textContent=member.wallet||member.address||'-'; document.getElementById('witMyAddress').textContent=member.wallet||member.address||'-';
-  }catch(e){}
-}
-async function doDeposit(){ try{ let r=await api('/deposit','POST',{amount:document.getElementById('depAmt').value,proof:document.getElementById('depProof').value}); alert(r.message); }catch(e){ alert(e.message); } }
-async function doWithdraw(){ try{ let r=await api('/withdraw','POST',{amount:document.getElementById('witAmount').value,withdrawalPassword:document.getElementById('witPass').value}); alert(r.message); refreshBalance(); }catch(e){ alert(e.message); } }
-async function createTable(){ try{ let r=await api('/create-table','POST',{game:document.getElementById('gameSel').value,entry:document.getElementById('entryAmt').value,maxPlayers:document.getElementById('maxP').value}); alert(r.message); loadTables(); refreshBalance(); }catch(e){ alert(e.message); } }
-async function loadTables(){ try{ let r=await api('/tables'); let h=''; r.tables.forEach(t=>{ h+='<div style="border:1px solid #444;padding:10px;border-radius:10px;margin:8px 0">'+t.game+' - '+t.entry+' USD - '+t.creator_name+' - '+(t.players||[]).length+'/'+t.max_players+' <button onclick="joinTable('+t.id+')">HIDITRA</button></div>'; }); document.getElementById('tablesList').innerHTML=h||'Tsy misy table'; }catch(e){} }
-async function joinTable(id){ try{ let r=await api('/join-table','POST',{tableId:id}); alert(r.message); loadTables(); refreshBalance(); }catch(e){ alert(e.message); } }
-async function playGame(g){ try{ let r=await api('/play-'+g,'POST',{}); document.getElementById('gameMsg').textContent=r.win?'🎉 NARESY - x'+r.amount:'❌ VERY - Andramo indray'; }catch(e){ alert(e.message); } }
-async function loadAdmin(){ try{ let r=await api('/admin/stats'); let h='<p>Membre: '+r.users+' | Depot en attente: '+r.pendingDeposits+' | Retrait en attente: '+r.pendingWithdraws+'</p>'; r.transactions.forEach(t=>{ h+='<div style="border:1px solid #444;padding:8px;border-radius:8px;margin:6px 0">'+t.type+' - '+t.amount+' USD - '+t.numero+' - Wallet: '+(t.proof||'-')+' - '+t.status+' <button onclick="validateTx('+t.id+',\'approve\')" class="green" style="padding:6px">✅ VALIDER</button> <button onclick="validateTx('+t.id+',\'reject\')" class="red" style="padding:6px">❌ REFUSER</button></div>'; }); document.getElementById('adminBox').innerHTML=h; }catch(e){ document.getElementById('adminBox').textContent=e.message; } }
-async function validateTx(id,action){ try{ let r=await api('/admin/validate','POST',{id,action}); alert(r.message); loadAdmin(); }catch(e){ alert(e.message); } }
+let member=null,DEPOT_WALLETS=[],DEP_SEL=null,DEP_KIND='mobile';
+function showAuth(t){document.getElementById('boxLogin').classList.toggle('hidden',t!=='login');document.getElementById('boxReg').classList.toggle('hidden',t!=='reg');}
+function copyTxt(t){navigator.clipboard.writeText(t);alert('Copie : '+t);}
+async function api(p,m,d){let tok=sessionStorage.getItem('mada_token')||'';let o={method:m||'GET',headers:{'Content-Type':'application/json'}};if(tok)o.headers.Authorization='Bearer '+tok;if(d)o.body=JSON.stringify(d);let r=await fetch('/api'+p,o);let t=await r.text();let j={};try{j=JSON.parse(t)}catch(e){j={message:t}}if(!r.ok)throw new Error(j.message||'Erreur');return j;}
+async function doRegister(){try{let nom=document.getElementById('regNom').value,pays=document.getElementById('regPays').value,numero=document.getElementById('regNumero').value,pw=document.getElementById('regPass').value,cf=document.getElementById('regPass2').value,wp=document.getElementById('regWithPass').value;let r=await api('/register','POST',{nom,pays,numero,password:pw,confirmPassword:cf,withdrawalPassword:wp});document.getElementById('authMsg').textContent=r.message;alert(r.message);showAuth('login');}catch(e){document.getElementById('authMsg').textContent=e.message;alert(e.message);}}
+async function doLogin(){try{let numero=document.getElementById('logNumero').value,password=document.getElementById('logPass').value;let r=await api('/login','POST',{numero,password});sessionStorage.setItem('mada_token',r.token);member=r.user;document.getElementById('pageAuth').classList.add('hidden');document.getElementById('pageHome').classList.remove('hidden');document.getElementById('bottomNav').classList.remove('hidden');refreshBalance();loadTables();loadWallets();}catch(e){alert(e.message);}}
+function logout(){sessionStorage.removeItem('mada_token');location.reload();}
+function go(p){['pageHome','pageDepot','pageRetrait','pageCompte','pageJeux','pageAdmin','pageLoto','pageLobby','pageSalon','pageGame','modalCreate','modalJoin'].forEach(id=>{let e=document.getElementById(id);if(e)e.classList.add('hidden');});let map={home:'pageHome',depot:'pageDepot',retrait:'pageRetrait',compte:'pageCompte',jeux:'pageJeux',admin:'pageAdmin'};document.getElementById(map[p]).classList.remove('hidden');if(p==='admin')loadAdmin();if(p==='home'||p==='compte')refreshBalance();if(p==='home')loadTables();if(p==='depot')loadWallets();}
+async function refreshBalance(){try{let r=await api('/me');member=r.user;document.getElementById('balanceText').textContent=member.balance;document.getElementById('homeBal').textContent=member.balance;document.getElementById('cBal').textContent=member.balance;document.getElementById('homeName').textContent=member.nom;document.getElementById('cName').textContent=member.nom;document.getElementById('cPhone').textContent=member.numero;document.getElementById('myMemberId').textContent=member.memberId||'-';document.getElementById('myWallet').textContent=member.wallet||member.address||'-';document.getElementById('witMyAddress').textContent=member.wallet||member.address||'-';window.CURRENT_BALANCE=member.balance;}catch(e){}}
+// DEPOT VAOVAO
+async function loadWallets(){try{let r=await fetch('/api/wallets');let j=await r.json();DEPOT_WALLETS=j.wallets||[];}catch(e){}if(!DEPOT_WALLETS.length)DEPOT_WALLETS=[{type:'mobile',network:'YAS - Yas',address:'0340262175 - Nom: Paul'},{type:'mobile',network:'ORANGE - Orange',address:'0373569233 - Nom: Romario'},{type:'mobile',network:'AIRTEL - Airtel',address:'0352368915 - Nom: Romario'},{type:'crypto',network:'T.BEP20 - USD',address:'0xbd4a1c2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8'},{type:'crypto',network:'POLYGON - USD',address:'0x9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b'},{type:'crypto',network:'ETH - Ethereum',address:'0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b'},{type:'crypto',network:'TRC20 - USDT',address:'TXYZ123456789abcdefghijkmnopqrstuv'},{type:'crypto',network:'BTC - Bitcoin',address:'bc1qxyz123456789abcdefghijkmnopqrstuvwx'}];setDepKind('mobile');}
+function setDepKind(k){DEP_KIND=k;DEP_SEL=null;document.getElementById('btnDepMobile').className=k==='mobile'?'':'gray';document.getElementById('btnDepCrypto').className=k==='crypto'?'':'gray';document.getElementById('depBenefBox').classList.add('hidden');document.getElementById('depCodeBox').classList.add('hidden');document.getElementById('depCryptoList').classList.add('hidden');let box=document.getElementById('depNetBtns');box.innerHTML='';if(k==='mobile'){DEPOT_WALLETS.forEach((w,i)=>{if(w.type!=='mobile')return;let b=document.createElement('button');b.textContent=w.network.split(' - ')[0];b.className='gray';b.onclick=()=>selectDepWallet(i,b);box.appendChild(b);});}else{document.getElementById('depCryptoList').classList.remove('hidden');let list=document.getElementById('depCryptoList');list.innerHTML='<p style="font-weight:900;color:#ff6b00">HISEO DAHOLO - COPY FOTSINY :</p>';DEPOT_WALLETS.forEach((w,i)=>{if(w.type!=='crypto')return;let d=document.createElement('div');d.style.cssText='background:#111;border:2px solid #ff6b00;border-radius:12px;padding:12px;margin:8px 0';d.innerHTML='<b style="color:#ff6b00">'+w.network+'</b><div style="background:#000;color:#fff;padding:10px;border-radius:10px;word-break:break-all;font-size:13px;font-weight:700;margin:8px 0">'+w.address+'</div><button class="green" style="margin:0" onclick="copyCrypto('+i+',this)">📋 COPY ADRESS</button>';list.appendChild(d);});}}
+function selectDepWallet(i,btn){document.querySelectorAll('#depNetBtns button').forEach(x=>x.className='gray');if(btn)btn.className='green';DEP_SEL=DEPOT_WALLETS[i];let w=DEP_SEL,p=w.address.split(' - Nom: ');document.getElementById('depBenefBox').classList.remove('hidden');document.getElementById('depCodeBox').classList.remove('hidden');document.getElementById('depBenefTitle').textContent='Bénéficiaire '+w.network.split(' ')[0];document.getElementById('depBenefName').textContent=p[0];document.getElementById('depBenefNum').textContent=p[1]||w.network;let code='#111*1*4*1**#';if(w.network.includes('ORANGE'))code='#144*1*4*1**#';document.getElementById('depCode').textContent=code;document.getElementById('depCodeLink').href='tel:'+encodeURIComponent(code);}
+function copyCrypto(i,btn){DEP_SEL=DEPOT_WALLETS[i];navigator.clipboard.writeText(DEP_SEL.address);btn.textContent='✅ COPIÉ - '+DEP_SEL.network;alert('Copié : '+DEP_SEL.network+' - '+DEP_SEL.address);}
+document.getElementById('depAmt').addEventListener('input',e=>{let ar=parseFloat(e.target.value||0),usd=(ar/4500).toFixed(2);document.getElementById('depExact').textContent=ar?ar+' Ar = '+usd+'$':'— Ar';document.getElementById('depUsdHint').textContent=ar?'Vola USD : '+usd+'$':'Vola USD : - $';});
+async function doDepositPro(){if(!DEP_SEL)return alert('Safidio aloha : YAS / ORANGE / AIRTEL - Na COPY @ CRYPTO');let amt=parseFloat(document.getElementById('depAmt').value),sender=document.getElementById('depSender').value,proof=document.getElementById('depProof').value;if(!amt||amt<4500)return alert('❌ MINIMUM DEPOT : 4 500 Ar = 1$ - LOTO : 0,5$ x 2 = 1$');if(!sender||!proof)return alert('Fenoy : Numero nandefa + Référence SMS');let usd=(amt/4500).toFixed(2);if(!confirm('Handoa '+amt+' Ar = '+usd+'$ ve ?'))return;try{let r=await api('/deposit','POST',{amount:usd,proof:sender+' - Ref:'+proof+' - '+amt+'Ar - '+DEP_SEL.network});alert(r.message);}catch(e){alert(e.message);}}
+async function doDeposit(){return doDepositPro();}
+async function doWithdraw(){try{let r=await api('/withdraw','POST',{amount:document.getElementById('witAmount').value,withdrawalPassword:document.getElementById('witPass').value});alert(r.message);refreshBalance();}catch(e){alert(e.message);}}
+async function createTable(){try{let r=await api('/create-table','POST',{game:document.getElementById('gameSel').value,entry:document.getElementById('entryAmt').value,maxPlayers:document.getElementById('maxP').value});alert(r.message);loadTables();refreshBalance();}catch(e){alert(e.message);}}
+async function loadTables(){try{let r=await api('/tables');let h='';r.tables.forEach(t=>{h+='<div style="border:1px solid #444;padding:10px;border-radius:10px;margin:8px 0">'+t.game+' - '+t.entry+' USD - '+t.creator_name+' - '+(t.players||[]).length+'/'+t.max_players+' <button onclick="joinTable('+t.id+')">HIDITRA</button></div>';});document.getElementById('tablesList').innerHTML=h||'Tsy misy table';}catch(e){}}
+async function joinTable(id){try{let r=await api('/join-table','POST',{tableId:id});alert(r.message);loadTables();refreshBalance();}catch(e){alert(e.message);}}
+// LOTO
+let LOTO_PICK=[];function openLoto(){['pageHome','pageDepot','pageRetrait','pageCompte','pageJeux','pageAdmin','pageLobby','pageSalon','pageGame'].forEach(id=>document.getElementById(id).classList.add('hidden'));document.getElementById('pageLoto').classList.remove('hidden');renderLoto();}
+function renderLoto(){let box=document.getElementById('lotoNumbers');box.innerHTML='';for(let i=1;i<=35;i++){let b=document.createElement('button');b.textContent=i;b.className='lotoNum';b.onclick=()=>toggleLoto(i,b);box.appendChild(b);}document.getElementById('lotoBalance').textContent=(window.CURRENT_BALANCE||0)+' USD';}
+function toggleLoto(n,btn){let idx=LOTO_PICK.indexOf(n);if(idx>-1){LOTO_PICK.splice(idx,1);btn.classList.remove('on');}else{if(LOTO_PICK.length>=5)return alert('Efa 5 - Esory 1');LOTO_PICK.push(n);btn.classList.add('on');}document.getElementById('lotoPicked').textContent=LOTO_PICK.join(' - ')||'- - - - -';}
+function flashLoto(){LOTO_PICK=[];while(LOTO_PICK.length<5){let n=Math.floor(Math.random()*35)+1;if(!LOTO_PICK.includes(n))LOTO_PICK.push(n);}renderLoto();document.querySelectorAll('#lotoNumbers button').forEach(b=>{if(LOTO_PICK.includes(parseInt(b.textContent)))b.classList.add('on');});document.getElementById('lotoPicked').textContent=LOTO_PICK.join(' - ');}
+function clearLoto(){LOTO_PICK=[];renderLoto();document.getElementById('lotoPicked').textContent='- - - - -';}
+async function playLoto(){if(LOTO_PICK.length!==5)return alert('Safidio 5 Numero - 5/35 - Flash raha automatique');let bal=parseFloat(window.CURRENT_BALANCE||0);if(bal<1){if(confirm('❌ SOLDE INSUFFISANT - Mila 1$ = 4 500 Ar - 0,5$ x 2 - Hanao DEPOT ?'))go('depot');return;}try{let r=await api('/play-loto','POST',{numbers:LOTO_PICK});document.getElementById('lotoMsg').textContent=r.message||'Vita';alert(r.message);}catch(e){alert(e.message);}}
+async function playGame(g){if(g==='loto')return openLoto();return openLobby(g.toUpperCase());}
+// LOBBY
+let CURRENT_GAME='RAMI',PARTY_MODE='Bordel',CURRENT_PARTY=null,SALON_INT=null;
+function openLobby(g){CURRENT_GAME=g;document.getElementById('lobbyTitle').textContent=g+' EN LIGNE';['pageHome','pageDepot','pageRetrait','pageCompte','pageJeux','pageAdmin','pageLoto','pageSalon','pageGame'].forEach(id=>document.getElementById(id).classList.add('hidden'));document.getElementById('pageLobby').classList.remove('hidden');}
+function setMode(m){PARTY_MODE=m;document.getElementById('modeBordel').className=m==='Bordel'?'':'gray';document.getElementById('modeNaturel').className=m==='Naturel'?'':'gray';}
+function openCreateParty(){document.getElementById('modalCreate').classList.remove('hidden');}
+function openJoinParty(){document.getElementById('modalJoin').classList.remove('hidden');}
+function closeModals(){document.getElementById('modalCreate').classList.add('hidden');document.getElementById('modalJoin').classList.add('hidden');}
+function genCode(){let c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',r='';for(let i=0;i<6;i++)r+=c[Math.floor(Math.random()*c.length)];return r;}
+async function createParty(){let mise=parseInt(document.getElementById('partyMise').value||0);if(mise<0||mise>10000||mise%100!==0)return alert('Mise : 0 = Gratuit - Multiple de 100 - Max 10 000 Ar');let bal=parseFloat(window.CURRENT_BALANCE||0);if(mise>0&&bal*4500<mise)return alert('Solde insuffisant - Depot 4 500 Ar aloha');let code=genCode();CURRENT_PARTY={code,game:CURRENT_GAME,mise,mode:PARTY_MODE,players:['Moi'],created:Date.now()};try{await fetch('/api/party',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(CURRENT_PARTY)});}catch(e){}localStorage.setItem('party_'+code,JSON.stringify(CURRENT_PARTY));localStorage.setItem('my_party',code);closeModals();showSalon();}
+async function joinParty(){let code=document.getElementById('joinCode').value.trim().toUpperCase();if(!code)return alert('Ampidiro ny Code');let p=null;try{let r=await fetch('/api/party/'+code);if(r.ok)p=await r.json();}catch(e){}if(!p)p=JSON.parse(localStorage.getItem('party_'+code)||'null');if(!p)return alert('Code tsy hita - Angataho @ namanao indray');CURRENT_PARTY=p;closeModals();showSalon();}
+function showSalon(){['pageHome','pageDepot','pageRetrait','pageCompte','pageJeux','pageAdmin','pageLoto','pageLobby','pageGame'].forEach(id=>document.getElementById(id).classList.add('hidden'));document.getElementById('pageSalon').classList.remove('hidden');document.getElementById('salonCode').textContent=CURRENT_PARTY.code;document.getElementById('salonInfo').textContent=(CURRENT_PARTY.mise==0?'Partie gratuite':'Mise '+CURRENT_PARTY.mise+' Ar')+' · Jeu '+CURRENT_PARTY.mode;document.getElementById('salonDesc').textContent=CURRENT_PARTY.mode+' · 2 joueurs · '+(CURRENT_PARTY.mise==0?'Gratuit':CURRENT_PARTY.mise+' Ar');document.getElementById('salonMeName').textContent=member?member.nom:'Moi';let left=295;clearInterval(SALON_INT);SALON_INT=setInterval(()=>{left--;let m=String(Math.floor(left/60)).padStart(2,'0'),s=String(left%60).padStart(2,'0');document.getElementById('salonTimer').textContent=m+':'+s;document.getElementById('salonWait').textContent='En attente de votre ami... fermeture dans '+m+':'+s+'.';if(left<=0){clearInterval(SALON_INT);alert('Salon nikatona');go('jeux');}},1000);}
+function inviteFriend(){let txt='Milalao '+CURRENT_PARTY.game+' amiko - Code : '+CURRENT_PARTY.code+' - Mise : '+(CURRENT_PARTY.mise==0?'Gratuit':CURRENT_PARTY.mise+' Ar')+' - Midira @ MADA MLALAO - Rejoindre - Code : '+CURRENT_PARTY.code;if(navigator.share)navigator.share({text:txt});else{navigator.clipboard.writeText(txt);alert('Copié : '+txt);}}
+function quitSalon(){clearInterval(SALON_INT);go('jeux');}
+function quickPlay(){alert('Mitady adversaire... - Raha tsy misy - Mamorona Partie privée @ Entre Amis');}
+function resumeGame(){let c=localStorage.getItem('my_party');if(!c)return alert('Tsy misy Partie en cours');document.getElementById('joinCode').value=c;joinParty();}
+function playBot(){alert('Vs Bot - '+CURRENT_GAME+' - 1 vs 1 - Gratuit');document.getElementById('gameTitle').textContent=CURRENT_GAME+' vs BOT';['pageHome','pageDepot','pageRetrait','pageCompte','pageJeux','pageAdmin','pageLoto','pageLobby','pageSalon'].forEach(id=>document.getElementById(id).classList.add('hidden'));document.getElementById('pageGame').classList.remove('hidden');}
+async function loadAdmin(){try{let r=await api('/admin/stats');let h='<p>Membre: '+r.users+' | Depot en attente: '+r.pendingDeposits+' | Retrait en attente: '+r.pendingWithdraws+'</p>';r.transactions.forEach(t=>{h+='<div style="border:1px solid #444;padding:8px;border-radius:8px;margin:6px 0">'+t.type+' - '+t.amount+' USD - '+t.numero+' - Wallet: '+(t.proof||'-')+' - '+t.status+' <button onclick="validateTx('+t.id+',\'approve\')" class="green" style="padding:6px">✅ VALIDER</button> <button onclick="validateTx('+t.id+',\'reject\')" class="red" style="padding:6px">❌ REFUSER</button></div>';});document.getElementById('adminBox').innerHTML=h;}catch(e){document.getElementById('adminBox').textContent=e.message;}}
+async function validateTx(id,action){try{let r=await api('/admin/validate','POST',{id,action});alert(r.message);loadAdmin();}catch(e){alert(e.message);}}
+loadWallets();
 </script></body></html>
